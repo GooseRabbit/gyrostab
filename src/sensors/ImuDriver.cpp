@@ -21,11 +21,13 @@ constexpr float kDegreesToRadians = 0.01745329252f;
 ICM_20948_SPI imu;
 bool imuInitialized = false;
 bool imuConfigured = false;
+bool imuBeginAttempted = false;
 uint32_t sampleSequence = 0;
 } // namespace
 
 bool beginImu()
 {
+    imuBeginAttempted = true;
     imuInitialized = false;
     imuConfigured = false;
     sampleSequence = 0;
@@ -33,6 +35,7 @@ bool beginImu()
     // Назначаем SPI-пины ESP32 явно, не полагаясь на выводы по умолчанию платы.
     if (!SPI.begin(kImuSckPin, kImuMisoPin, kImuMosiPin, kImuCsPin))
     {
+        imu.status = ICM_20948_Stat_Err;
         return false;
     }
 
@@ -98,6 +101,16 @@ bool configureImu(const ImuConfig& config)
 
     imuConfigured = true;
     return true;
+}
+
+ICM_20948_Status_e checkImuStatus()
+{
+    if (!imuBeginAttempted)
+    {
+        return ICM_20948_Stat_Unknown;
+    }
+
+    return imu.status;
 }
 
 bool readImuSample(ImuSample& sample)
