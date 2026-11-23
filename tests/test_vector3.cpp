@@ -104,6 +104,6 @@ int main()
     testHandlesVeryLargeAndVerySmallValues();
     testSupportsInPlaceNormalization();
 
-    std::cout << "All Vector3 tests passed.\\n";
+    std::cout << "All Vector3 tests passed.\n";
     return 0;
 }
