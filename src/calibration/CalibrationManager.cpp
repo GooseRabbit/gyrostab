@@ -190,4 +190,10 @@ bool validateCalibration(const ImuSample* samples, size_t sampleCount,
     return true;
 }
 
+void resetCalibration(Vector3f& gyroBiasRadPerSec, bool& calibrationValid)
+{
+    gyroBiasRadPerSec = {0.0f, 0.0f, 0.0f};
+    calibrationValid = false;
+}
+
 } // namespace gyrostab
