@@ -127,4 +127,29 @@ bool updateOrientation(OrientationEstimate& estimate, const ImuSample& sample,
     return true;
 }
 
+bool validateOrientation(const OrientationEstimate& estimate,
+                         float maximumNormDeviation)
+{
+    if (!estimate.valid || !std::isfinite(maximumNormDeviation) || maximumNormDeviation < 0.0f ||
+        !std::isfinite(estimate.quaternion.w) ||
+        !std::isfinite(estimate.quaternion.x) ||
+        !std::isfinite(estimate.quaternion.y) ||
+        !std::isfinite(estimate.quaternion.z))
+    {
+        return false;
+    }
+
+    const double norm = std::sqrt(
+        static_cast<double>(estimate.quaternion.w) * estimate.quaternion.w +
+        static_cast<double>(estimate.quaternion.x) * estimate.quaternion.x +
+        static_cast<double>(estimate.quaternion.y) * estimate.quaternion.y +
+        static_cast<double>(estimate.quaternion.z) * estimate.quaternion.z);
+    if (!std::isfinite(norm) || norm <= 0.0)
+    {
+        return false;
+    }
+
+    return std::fabs(norm - 1.0) <= static_cast<double>(maximumNormDeviation);
+}
+
 } // namespace gyrostab
