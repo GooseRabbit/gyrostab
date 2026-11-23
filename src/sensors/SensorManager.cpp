@@ -117,4 +117,15 @@ bool updateSensorData(const ImuConfig& config)
     return true;
 }
 
+bool getLatestSample(ImuSample& sample, uint32_t nowUs, uint32_t maximumAgeUs)
+{
+    if (!hasLatestSample || !isSampleFresh(latestSample, nowUs, maximumAgeUs))
+    {
+        return false;
+    }
+
+    sample = latestSample;
+    return true;
+}
+
 } // namespace gyrostab
