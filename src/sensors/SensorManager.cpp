@@ -4,6 +4,14 @@
 
 namespace gyrostab
 {
+namespace
+{
+
+// Кэш последнего успешно проверенного образца; его читает getLatestSample().
+ImuSample latestSample = {};
+bool hasLatestSample = false;
+
+} // namespace
 
 bool validateSensorSample(const ImuSample& sample, const ImuConfig& config)
 {
@@ -72,11 +80,6 @@ bool validateSensorSample(const ImuSample& sample, const ImuConfig& config)
     return true;
 }
 
-} // namespace gyrostab
-
-namespace gyrostab
-{
-
 bool isSampleFresh(const ImuSample& sample, uint32_t nowUs, uint32_t maximumAgeUs)
 {
     // Отсутствие обязательных каналов означает, что опубликованного образца ещё нет.
@@ -94,6 +97,24 @@ bool isSampleFresh(const ImuSample& sample, uint32_t nowUs, uint32_t maximumAgeU
     // Беззнаковое вычитание корректно обрабатывает rollover счётчика micros().
     const uint32_t ageUs = nowUs - sample.timestampUs;
     return ageUs <= maximumAgeUs;
+}
+
+bool updateSensorData(const ImuConfig& config)
+{
+    ImuSample candidate = {};
+    if (!readImuSample(candidate))
+    {
+        return false;
+    }
+
+    if (!validateSensorSample(candidate, config))
+    {
+        return false;
+    }
+
+    latestSample = candidate;
+    hasLatestSample = true;
+    return true;
 }
 
 } // namespace gyrostab
