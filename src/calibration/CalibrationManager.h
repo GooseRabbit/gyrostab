@@ -39,4 +39,8 @@ bool validateCalibration(const ImuSample* samples, size_t sampleCount,
                          const Vector3f& gyroBiasRadPerSec,
                          float maximumGyroscopeDeviationFromBiasRadPerSec);
 
+// Сбрасывает рассчитанный bias и caller-owned признак готовности калибровки.
+// Окно измерений не хранится в CalibrationManager и здесь не изменяется.
+void resetCalibration(Vector3f& gyroBiasRadPerSec, bool& calibrationValid);
+
 } // namespace gyrostab
