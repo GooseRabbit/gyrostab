@@ -55,9 +55,10 @@
 - [x] `resetCalibration()` — сброс gyro bias и caller-owned признака валидности калибровки.
 - [x] `initializeEstimator()` — нейтральное состояние кватерниона; оценка остаётся невалидной до обновления.
 - [x] `updateOrientation()` — относительная gyro-only quaternion-интеграция после вычитания bias.
+- [x] `validateOrientation()` — проверка валидности и нормы рассчитанного quaternion без его изменения.
 - [ ] Arduino-сборка целевой платы и аппаратная проверка IMU — ещё не выполнены.
-- Следующая функция по плану: `validateOrientation()`.
-- Общий прогресс реализации функций: 18/58 (31,0%); подробности — в [PROGRESS.md](docs/PROGRESS.md).
+- Следующая функция по плану: `publishOrientationTelemetry()`.
+- Общий прогресс реализации функций: 19/58 (32,8%); подробности — в [PROGRESS.md](docs/PROGRESS.md).
 
 ## Главные инженерные принципы
 
