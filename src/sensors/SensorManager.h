@@ -20,4 +20,8 @@ bool isSampleFresh(const ImuSample& sample, uint32_t nowUs, uint32_t maximumAgeU
 // или измерения не проходят validateSensorSample().
 bool updateSensorData(const ImuConfig& config);
 
+// Возвращает последний сохранённый образец, только если он ещё свежий.
+// nowUs и maximumAgeUs задаются вызывающим кодом; при false sample не меняется.
+bool getLatestSample(ImuSample& sample, uint32_t nowUs, uint32_t maximumAgeUs);
+
 } // namespace gyrostab
