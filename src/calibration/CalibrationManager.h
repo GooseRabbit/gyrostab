@@ -25,4 +25,10 @@ struct StationaryCriteria
 bool detectStationary(const ImuSample* samples, size_t sampleCount,
                       const StationaryCriteria& criteria, uint32_t nowUs);
 
+// Вычисляет gyro bias как среднее значение угловой скорости по неподвижному окну.
+// При false выходной вектор остаётся без изменений.
+bool calibrateGyroBias(const ImuSample* samples, size_t sampleCount,
+                       const StationaryCriteria& stationaryCriteria, uint32_t nowUs,
+                       Vector3f& gyroBiasRadPerSec);
+
 } // namespace gyrostab
