@@ -5,8 +5,23 @@
 enum ICM_20948_Status_e
 {
     ICM_20948_Stat_Ok = 0,
-    ICM_20948_Stat_Err = 1,
-    ICM_20948_Stat_NoData = 2
+    ICM_20948_Stat_Err,
+    ICM_20948_Stat_NotImpl,
+    ICM_20948_Stat_ParamErr,
+    ICM_20948_Stat_WrongID,
+    ICM_20948_Stat_InvalSensor,
+    ICM_20948_Stat_NoData,
+    ICM_20948_Stat_SensorNotSupported,
+    ICM_20948_Stat_DMPNotSupported,
+    ICM_20948_Stat_DMPVerifyFail,
+    ICM_20948_Stat_FIFONoDataAvail,
+    ICM_20948_Stat_FIFOIncompleteData,
+    ICM_20948_Stat_FIFOMoreDataAvail,
+    ICM_20948_Stat_UnrecognisedDMPHeader,
+    ICM_20948_Stat_UnrecognisedDMPHeader2,
+    ICM_20948_Stat_InvalDMPRegister,
+    ICM_20948_Stat_NUM,
+    ICM_20948_Stat_Unknown
 };
 
 enum ICM_20948_InternalSensorID_bm
@@ -48,11 +63,11 @@ public:
         status = mockBeginStatus;
         return status;
     }
-    ICM_20948_Status_e setSampleMode(uint8_t, uint8_t) { return ICM_20948_Stat_Ok; }
-    ICM_20948_Status_e setFullScale(uint8_t, ICM_20948_fss_t) { return ICM_20948_Stat_Ok; }
-    ICM_20948_Status_e setSampleRate(uint8_t, ICM_20948_smplrt_t) { return ICM_20948_Stat_Ok; }
-    ICM_20948_Status_e setDLPFcfg(uint8_t, ICM_20948_dlpcfg_t) { return ICM_20948_Stat_Ok; }
-    ICM_20948_Status_e enableDLPF(uint8_t, bool) { return ICM_20948_Stat_Ok; }
+    ICM_20948_Status_e setSampleMode(uint8_t, uint8_t) { status = ICM_20948_Stat_Ok; return status; }
+    ICM_20948_Status_e setFullScale(uint8_t, ICM_20948_fss_t) { status = ICM_20948_Stat_Ok; return status; }
+    ICM_20948_Status_e setSampleRate(uint8_t, ICM_20948_smplrt_t) { status = ICM_20948_Stat_Ok; return status; }
+    ICM_20948_Status_e setDLPFcfg(uint8_t, ICM_20948_dlpcfg_t) { status = ICM_20948_Stat_Ok; return status; }
+    ICM_20948_Status_e enableDLPF(uint8_t, bool) { status = ICM_20948_Stat_Ok; return status; }
     bool dataReady()
     {
         const bool ready = mockDataReady;
