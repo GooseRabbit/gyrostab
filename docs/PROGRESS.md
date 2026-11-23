@@ -5,7 +5,7 @@
 
 ## Общий показатель
 
-**7 из 58 запланированных функций реализованы и добавлены в `main` — 12,1%.**
+**8 из 58 запланированных функций реализованы и добавлены в `main` — 13,8%.**
 
 Процент считается по уникальным именам функций, перечисленным в `ARCHITECTURE.md` и `IMPLEMENTATION_PLAN.md` (совпадающие имена считаются один раз). `setup()` и `loop()`, структуры данных, документация, тестовые сценарии и аппаратные проверки в знаменатель не входят.
 
@@ -19,7 +19,7 @@
 - [x] `normalizeAxisConfig()`
 - [ ] `validateMountingConfig()`
 
-## 2. Драйвер IMU и менеджер датчиков — 5/10
+## 2. Драйвер IMU и менеджер датчиков — 6/10
 
 - [x] `beginImu()`
 - [x] `configureImu()`
@@ -28,7 +28,7 @@
 - [ ] `resetImuDataPath()`
 - [ ] `updateSensorData()`
 - [x] `validateSensorSample()`
-- [ ] `isSampleFresh()`
+- [x] `isSampleFresh()`
 - [ ] `getLatestSample()`
 - [ ] `getSensorHealth()`
 
@@ -107,7 +107,7 @@
 | Этап | Готово | Всего |
 |---|---:|---:|
 | Конфигурация и геометрия | 2 | 5 |
-| IMU и менеджер датчиков | 5 | 10 |
+| IMU и менеджер датчиков | 6 | 10 |
 | Калибровка | 0 | 4 |
 | Оценка ориентации | 0 | 5 |
 | Координаты и опорная ориентация | 0 | 5 |
@@ -117,13 +117,14 @@
 | Безопасность | 0 | 7 |
 | Магнитометр | 0 | 1 |
 | Диагностика | 0 | 5 |
-| **Итого** | **7** | **58** |
+| **Итого** | **8** | **58** |
 
 ## Проверка и аппаратная готовность
 
 - [x] Host-тесты геометрии: `normalizeVector3()`, `normalizeAxisConfig()`.
 - [x] Host-тесты `validateSensorSample()`: обязательные каналы, NaN/Inf, пределы выбранного full-scale, недопустимые диапазоны и необязательный магнитометр.
-- [x] Host-тесты драйвера с mock-интерфейсом SparkFun: проверены `beginImu()`, `configureImu()`, `readImuSample()`, `checkImuStatus()`, `validateSensorSample()`, свежесть образцов, преобразование единиц и отказные случаи (включая SPI error, WrongID, NoData и восстановление OK).
+- [x] Host-тесты `isSampleFresh()`: точная граница, нулевой возраст, rollover `uint32_t`, будущая метка, неопубликованный образец и неоднозначный интервал.
+- [x] Host-тесты драйвера с mock-интерфейсом SparkFun: проверены `beginImu()`, `configureImu()`, `readImuSample()`, `checkImuStatus()`, `validateSensorSample()`, `isSampleFresh()`, преобразование единиц и отказные случаи (включая SPI error, WrongID, NoData и восстановление OK).
 - [x] Проверка драйвера с `-Wall -Wextra -Wpedantic -Werror`.
 - [x] Повторная проверка драйвера с AddressSanitizer и UndefinedBehaviorSanitizer.
 - [ ] Полная сборка Arduino Sketch для точного профиля ESP32 Nano.
