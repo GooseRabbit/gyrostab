@@ -128,4 +128,20 @@ bool getLatestSample(ImuSample& sample, uint32_t nowUs, uint32_t maximumAgeUs)
     return true;
 }
 
+SensorHealth getSensorHealth(uint32_t nowUs, uint32_t maximumAgeUs)
+{
+    SensorHealth health = {};
+    health.driverStatus = checkImuStatus();
+    health.hasValidSample = hasLatestSample;
+
+    if (hasLatestSample)
+    {
+        health.lastSampleTimestampUs = latestSample.timestampUs;
+        health.lastSampleSequence = latestSample.sequence;
+        health.sampleFresh = isSampleFresh(latestSample, nowUs, maximumAgeUs);
+    }
+
+    return health;
+}
+
 } // namespace gyrostab
