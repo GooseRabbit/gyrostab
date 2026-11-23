@@ -51,6 +51,11 @@ bool readImuSample(ImuSample& sample)
     return true;
 }
 
+ICM_20948_Status_e checkImuStatus()
+{
+    return ICM_20948_Stat_Ok;
+}
+
 } // namespace gyrostab
 
 int main()
