@@ -129,6 +129,7 @@
 - [x] Host-тесты `getSensorHealth()`: неизвестный статус и пустой кэш, валидный и устаревший образец, разделение признаков валидности/свежести, метаданные последнего образца и отдельная фиксация статуса драйвера.
 - [x] Host-тесты `publishRawImuTelemetry()`: одна CSV-строка с 14 полями, фиксированный порядок, точность шесть знаков, флаги валидности и неизменность входного образца.
 - [x] Host-тесты `detectStationary()`: неподвижное окно, недостаточный размер/интервал, разрывы, движение по гироскопу и акселерометру, NaN/Inf, неверные пороги, порядок timestamp/sequence и rollover обоих счётчиков.
+- [x] Host-тесты `detectStationary()`: неподвижное окно, недостаточный размер/интервал, разрывы, движение по гироскопу и акселерометру, NaN/Inf, неверные пороги, порядок timestamp/sequence и rollover обоих счётчиков.
 - [x] Host-тесты драйвера с mock-интерфейсом SparkFun: проверены `beginImu()`, `configureImu()`, `readImuSample()`, `checkImuStatus()`, `validateSensorSample()`, `isSampleFresh()`, преобразование единиц и отказные случаи (включая SPI error, WrongID, NoData и восстановление OK).
 - [x] Проверка драйвера с `-Wall -Wextra -Wpedantic -Werror`.
 - [x] Повторная проверка драйвера с AddressSanitizer и UndefinedBehaviorSanitizer.
