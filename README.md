@@ -38,6 +38,7 @@
 
 - [x] `Vector3f` / `normalizeVector3()` — базовая математическая функция реализована и одобрена; native-тесты пройдены.
 - [x] `AxisConfig` / `normalizeAxisConfig()` — конфигурация и нормализация оси IMU реализованы; native-тесты пройдены.
+- [x] `MountingConfig` / `validateMountingConfig()` — три оси платформы в координатах IMU; проверка единичности, ортогональности и правой ориентации прошла native-тесты.
 - [ ] Минимальная сборка Arduino Sketch на целевой плате ESP32 Nano — ещё не проверена.
 - [x] `beginImu()` — SPI инициализация ICM-20948 через SparkFun Library.
 - [x] `configureImu()` — настройка акселерометра и гироскопа штатными методами SparkFun Library.
@@ -58,8 +59,8 @@
 - [x] `validateOrientation()` — проверка валидности и нормы рассчитанного quaternion без его изменения.
 - [x] `publishOrientationTelemetry()` — одна CSV-строка с метаданными и quaternion, включая valid-флаг.
 - [ ] Arduino-сборка целевой платы и аппаратная проверка IMU — ещё не выполнены.
-- Следующая функция по плану: `validateMountingConfig()`.
-- Общий прогресс реализации функций: 20/58 (34,5%); подробности — в [PROGRESS.md](docs/PROGRESS.md).
+- Следующая функция по плану: `transformImuToPlatform()`.
+- Общий прогресс реализации функций: 21/58 (36,2%); подробности — в [PROGRESS.md](docs/PROGRESS.md).
 
 ## Главные инженерные принципы
 
