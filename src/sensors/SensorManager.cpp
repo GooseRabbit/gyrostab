@@ -73,3 +73,27 @@ bool validateSensorSample(const ImuSample& sample, const ImuConfig& config)
 }
 
 } // namespace gyrostab
+
+namespace gyrostab
+{
+
+bool isSampleFresh(const ImuSample& sample, uint32_t nowUs, uint32_t maximumAgeUs)
+{
+    // Отсутствие обязательных каналов означает, что опубликованного образца ещё нет.
+    if (!sample.accelerometerValid || !sample.gyroscopeValid)
+    {
+        return false;
+    }
+
+    // При интервале в половину диапазона uint32_t и более порядок моментов неоднозначен.
+    if (maximumAgeUs >= 0x80000000UL)
+    {
+        return false;
+    }
+
+    // Беззнаковое вычитание корректно обрабатывает rollover счётчика micros().
+    const uint32_t ageUs = nowUs - sample.timestampUs;
+    return ageUs <= maximumAgeUs;
+}
+
+} // namespace gyrostab
