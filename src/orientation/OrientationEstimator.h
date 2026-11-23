@@ -37,4 +37,10 @@ bool updateOrientation(OrientationEstimate& estimate, const ImuSample& sample,
                        const Vector3f& gyroBiasRadPerSec,
                        uint32_t maximumDeltaTimeUs);
 
+
+// Проверяет валидность оценки и отклонение нормы quaternion от единицы.
+// maximumNormDeviation задаётся вызывающим кодом; состояние не изменяется.
+bool validateOrientation(const OrientationEstimate& estimate,
+                         float maximumNormDeviation);
+
 } // namespace gyrostab
