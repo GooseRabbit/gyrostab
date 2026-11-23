@@ -102,6 +102,8 @@ int main()
     assert(!detectStationary(samples, 4U, criteria, 6000U));
     samples[2].sequence = samples[1].sequence;
     assert(!detectStationary(samples, 4U, criteria, 4500U));
+    samples[2] = makeSample(3000U, 4U);
+    assert(!detectStationary(samples, 4U, criteria, 4500U)); // пропущен sequence
     samples[2] = makeSample(3000U, 2U);
     assert(!detectStationary(samples, 4U, criteria, 4500U)); // sequence пошёл назад
     samples[2] = makeSample(3000U, 0x80000002UL);
