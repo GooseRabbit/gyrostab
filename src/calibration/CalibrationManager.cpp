@@ -122,4 +122,39 @@ bool detectStationary(const ImuSample* samples, size_t sampleCount,
     return true;
 }
 
+bool calibrateGyroBias(const ImuSample* samples, size_t sampleCount,
+                       const StationaryCriteria& stationaryCriteria, uint32_t nowUs,
+                       Vector3f& gyroBiasRadPerSec)
+{
+    if (!detectStationary(samples, sampleCount, stationaryCriteria, nowUs))
+    {
+        return false;
+    }
+
+    double meanX = 0.0;
+    double meanY = 0.0;
+    double meanZ = 0.0;
+    for (size_t i = 0; i < sampleCount; ++i)
+    {
+        meanX += samples[i].angularVelocityRadPerSec.x;
+        meanY += samples[i].angularVelocityRadPerSec.y;
+        meanZ += samples[i].angularVelocityRadPerSec.z;
+    }
+
+    const double sampleCountAsDouble = static_cast<double>(sampleCount);
+    const Vector3f candidate = {
+        static_cast<float>(meanX / sampleCountAsDouble),
+        static_cast<float>(meanY / sampleCountAsDouble),
+        static_cast<float>(meanZ / sampleCountAsDouble)
+    };
+
+    if (!std::isfinite(candidate.x) || !std::isfinite(candidate.y) || !std::isfinite(candidate.z))
+    {
+        return false;
+    }
+
+    gyroBiasRadPerSec = candidate;
+    return true;
+}
+
 } // namespace gyrostab
