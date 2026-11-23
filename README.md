@@ -56,9 +56,10 @@
 - [x] `initializeEstimator()` — нейтральное состояние кватерниона; оценка остаётся невалидной до обновления.
 - [x] `updateOrientation()` — относительная gyro-only quaternion-интеграция после вычитания bias.
 - [x] `validateOrientation()` — проверка валидности и нормы рассчитанного quaternion без его изменения.
+- [x] `publishOrientationTelemetry()` — одна CSV-строка с метаданными и quaternion, включая valid-флаг.
 - [ ] Arduino-сборка целевой платы и аппаратная проверка IMU — ещё не выполнены.
-- Следующая функция по плану: `publishOrientationTelemetry()`.
-- Общий прогресс реализации функций: 19/58 (32,8%); подробности — в [PROGRESS.md](docs/PROGRESS.md).
+- Следующая функция по плану: `validateMountingConfig()`.
+- Общий прогресс реализации функций: 20/58 (34,5%); подробности — в [PROGRESS.md](docs/PROGRESS.md).
 
 ## Главные инженерные принципы
 
