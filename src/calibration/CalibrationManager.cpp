@@ -157,4 +157,37 @@ bool calibrateGyroBias(const ImuSample* samples, size_t sampleCount,
     return true;
 }
 
+bool validateCalibration(const ImuSample* samples, size_t sampleCount,
+                         const StationaryCriteria& stationaryCriteria, uint32_t nowUs,
+                         const Vector3f& gyroBiasRadPerSec,
+                         float maximumGyroscopeDeviationFromBiasRadPerSec)
+{
+    if (!std::isfinite(gyroBiasRadPerSec.x) ||
+        !std::isfinite(gyroBiasRadPerSec.y) ||
+        !std::isfinite(gyroBiasRadPerSec.z) ||
+        !std::isfinite(maximumGyroscopeDeviationFromBiasRadPerSec) ||
+        maximumGyroscopeDeviationFromBiasRadPerSec < 0.0f ||
+        !detectStationary(samples, sampleCount, stationaryCriteria, nowUs))
+    {
+        return false;
+    }
+
+    for (size_t i = 0; i < sampleCount; ++i)
+    {
+        const double deltaX =
+            static_cast<double>(samples[i].angularVelocityRadPerSec.x) - gyroBiasRadPerSec.x;
+        const double deltaY =
+            static_cast<double>(samples[i].angularVelocityRadPerSec.y) - gyroBiasRadPerSec.y;
+        const double deltaZ =
+            static_cast<double>(samples[i].angularVelocityRadPerSec.z) - gyroBiasRadPerSec.z;
+        const double deviation = std::sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+        if (deviation > maximumGyroscopeDeviationFromBiasRadPerSec)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 } // namespace gyrostab
