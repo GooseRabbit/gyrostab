@@ -31,4 +31,12 @@ bool calibrateGyroBias(const ImuSample* samples, size_t sampleCount,
                        const StationaryCriteria& stationaryCriteria, uint32_t nowUs,
                        Vector3f& gyroBiasRadPerSec);
 
+// Проверяет качество рассчитанного gyro bias на том же неподвижном окне.
+// maximumGyroscopeDeviationFromBiasRadPerSec — допустимое максимальное
+// евклидово отклонение отдельного измерения gyro от переданного bias.
+bool validateCalibration(const ImuSample* samples, size_t sampleCount,
+                         const StationaryCriteria& stationaryCriteria, uint32_t nowUs,
+                         const Vector3f& gyroBiasRadPerSec,
+                         float maximumGyroscopeDeviationFromBiasRadPerSec);
+
 } // namespace gyrostab
