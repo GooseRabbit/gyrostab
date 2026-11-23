@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 
+#include "../sensors/ImuDriver.h"
+
 namespace gyrostab
 {
 
@@ -26,5 +28,13 @@ struct OrientationEstimate
 
 // Задаёт нейтральное начальное состояние, не объявляя его валидной оценкой.
 void initializeEstimator(OrientationEstimate& estimate);
+
+// Интегрирует bias-corrected gyro. maximumDeltaTimeUs задаётся вызывающим кодом.
+// Первый валидный образец только привязывает время/sequence и начинает относительный отсчёт.
+// Ориентация задаётся body-to-world кватернионом; инкремент домножается справа.
+// Акселерометрическая коррекция и магнитометр здесь не используются.
+bool updateOrientation(OrientationEstimate& estimate, const ImuSample& sample,
+                       const Vector3f& gyroBiasRadPerSec,
+                       uint32_t maximumDeltaTimeUs);
 
 } // namespace gyrostab
