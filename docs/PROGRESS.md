@@ -1,0 +1,140 @@
+# Прогресс разработки Gyrostab
+
+**Текущая ветка:** `main`  
+**Состояние на:** 23 ноября 2026 года
+
+## Общий показатель
+
+<text>
+
+**4 из 58 запланированных функций реализованы и добавлены в `main` — 6,9%.**
+
+</text>
+
+Процент считается по уникальным именам функций, перечисленным в `ARCHITECTURE.md` и `IMPLEMENTATION_PLAN.md` (совпадающие имена считаются один раз). `setup()` и `loop()`, структуры данных, документация, тестовые сценарии и аппаратные проверки в знаменатель не входят.
+
+Функция считается реализованной, когда её код добавлен в `main` и блок принят. Это **не означает**, что прошивка уже собрана для целевой платы или проверена на реальном оборудовании.
+
+## 1. Конфигурация и геометрия — 2/5
+
+- [ ] `loadDefaultConfig()`
+- [ ] `validateConfig()`
+- [x] `normalizeVector3()`
+- [x] `normalizeAxisConfig()`
+- [ ] `validateMountingConfig()`
+
+## 2. Драйвер IMU и менеджер датчиков — 2/10
+
+- [x] `beginImu()`
+- [x] `configureImu()`
+- [ ] `readImuSample()`
+- [ ] `checkImuStatus()`
+- [ ] `resetImuDataPath()`
+- [ ] `updateSensorData()`
+- [ ] `validateSensorSample()`
+- [ ] `isSampleFresh()`
+- [ ] `getLatestSample()`
+- [ ] `getSensorHealth()`
+
+## 3. Калибровка — 0/4
+
+- [ ] `detectStationary()`
+- [ ] `calibrateGyroBias()`
+- [ ] `validateCalibration()`
+- [ ] `resetCalibration()`
+
+## 4. Оценка ориентации — 0/5
+
+- [ ] `initializeEstimator()`
+- [ ] `updateOrientation()`
+- [ ] `getOrientation()`
+- [ ] `resetOrientation()`
+- [ ] `validateOrientation()`
+
+## 5. Системы координат и опорная ориентация — 0/5
+
+- [ ] `transformImuToPlatform()`
+- [ ] `captureReferenceOrientation()`
+- [ ] `computeRelativeOrientation()`
+- [ ] `projectErrorOnControlAxis()`
+- [ ] `projectGyroRateOnControlAxis()`
+
+## 6. Драйвер сервопривода — 0/6
+
+- [ ] `beginServo()`
+- [ ] `setServoTarget()`
+- [ ] `limitServoPulse()`
+- [ ] `limitServoSlewRate()`
+- [ ] `writeServoPulse()`
+- [ ] `disableServoOutput()`
+
+## 7. Контроллер стабилизации — 0/7
+
+- [ ] `computeControlError()`
+- [ ] `computeDampingRate()`
+- [ ] `computePdCorrection()`
+- [ ] `resetController()`
+- [ ] `validateControllerOutput()`
+- [ ] `applyServoCommandLimits()`
+- [ ] `runControlStep()`
+
+## 8. Dead-zone с гистерезисом — 0/3
+
+- [ ] `updateDeadZoneState()`
+- [ ] `applyDeadZone()`
+- [ ] `resetDeadZone()`
+
+## 9. Безопасность и отказоустойчивость — 0/7
+
+- [ ] `updateSafetyState()`
+- [ ] `canRunController()`
+- [ ] `checkSensorTimeout()`
+- [ ] `checkEstimatorHealth()`
+- [ ] `checkCommandLimits()`
+- [ ] `enterFault()`
+- [ ] `applySafeOutputPolicy()`
+
+## 10. Магнитометр — 0/1
+
+- [ ] `calibrateMagnetometer()`
+
+## 11. Диагностика — 0/5
+
+- [ ] `publishRawImuTelemetry()`
+- [ ] `publishOrientationTelemetry()`
+- [ ] `publishTelemetry()`
+- [ ] `recordFault()`
+- [ ] `updateCounters()`
+
+## Сводка по этапам
+
+| Этап | Готово | Всего |
+|---|---:|---:|
+| Конфигурация и геометрия | 2 | 5 |
+| IMU и менеджер датчиков | 2 | 10 |
+| Калибровка | 0 | 4 |
+| Оценка ориентации | 0 | 5 |
+| Координаты и опорная ориентация | 0 | 5 |
+| Драйвер серво | 0 | 6 |
+| Контроллер | 0 | 7 |
+| Dead-zone | 0 | 3 |
+| Безопасность | 0 | 7 |
+| Магнитометр | 0 | 1 |
+| Диагностика | 0 | 5 |
+| **Итого** | **4** | **58** |
+
+## Проверка и аппаратная готовность
+
+- [x] Host-тесты геометрии: `normalizeVector3()`, `normalizeAxisConfig()`.
+- [x] Host-тесты драйвера с mock-интерфейсом SparkFun: проверены `beginImu()`, `configureImu()`, порядок вызовов и отказы.
+- [x] Проверка драйвера с `-Wall -Wextra -Wpedantic -Werror`.
+- [x] Повторная проверка драйвера с AddressSanitizer и UndefinedBehaviorSanitizer.
+- [ ] Полная сборка Arduino Sketch для точного профиля ESP32 Nano.
+- [ ] Проверка SPI и идентификатора ICM-20948 на реальной плате.
+- [ ] Сверка фактической распиновки с проводкой.
+- [ ] Чтение и проверка сырых данных акселерометра, гироскопа и магнитометра.
+- [ ] Проверка ориентации, механики и привода на стенде.
+
+## Правило обновления
+
+После одобрения и добавления очередной функции в `main` её отметка здесь обновляется, затем пересчитывается общий показатель. Новые функции не добавляются в этот список без отдельного согласования. Текущий порядок разработки задаётся `IMPLEMENTATION_PLAN.md`; этот файл показывает только статус.
