@@ -92,8 +92,7 @@ bool detectStationary(const ImuSample* samples, size_t sampleCount,
             const uint32_t sampleGapUs = sample.timestampUs - previousSample.timestampUs;
             const uint32_t sequenceDifference = sample.sequence - previousSample.sequence;
             if (sampleGapUs == 0U || sampleGapUs > criteria.maximumSampleGapUs ||
-                sampleGapUs >= kHalfTimestampRange || sequenceDifference == 0U ||
-                sequenceDifference >= kHalfTimestampRange)
+                sampleGapUs >= kHalfTimestampRange || sequenceDifference != 1U)
             {
                 return false;
             }
