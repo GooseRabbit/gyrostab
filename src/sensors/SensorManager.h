@@ -15,4 +15,9 @@ bool validateSensorSample(const ImuSample& sample, const ImuConfig& config);
 // maximumAgeUs должен быть меньше 2^31 для однозначной арифметики времени uint32_t с rollover.
 bool isSampleFresh(const ImuSample& sample, uint32_t nowUs, uint32_t maximumAgeUs);
 
+// Получает один новый образец от драйвера, проверяет его и сохраняет как последний валидный.
+// Возвращает false без замены сохранённого образца, если новых данных нет, чтение ошибочно
+// или измерения не проходят validateSensorSample().
+bool updateSensorData(const ImuConfig& config);
+
 } // namespace gyrostab
