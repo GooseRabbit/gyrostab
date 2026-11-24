@@ -79,9 +79,10 @@
 - [x] `updateDeadZoneState()` — переключает caller-owned состояние dead-zone по абсолютной ошибке с гистерезисом.
 - [x] `applyDeadZone()` — подавляет только позиционную ошибку при активной dead-zone, сохраняя знак вне неё.
 - [x] `resetDeadZone()` — сбрасывает caller-owned состояние dead-zone в неактивное.
+- [x] `updateSafetyState()` — ведёт состояния BOOT → INITIALIZING → CALIBRATING → READY → ACTIVE; FAULT остаётся защёлкнутым.
 - [ ] Arduino-сборка целевой платы и аппаратная проверка IMU — ещё не выполнены.
-- Следующая функция по плану: `updateSafetyState()`.
-- Общий прогресс реализации функций: 42/58 (72,4%); подробности — в [PROGRESS.md](docs/PROGRESS.md).
+- Следующая функция по плану: `canRunController()`.
+- Общий прогресс реализации функций: 43/58 (74,1%); подробности — в [PROGRESS.md](docs/PROGRESS.md).
 
 ## Главные инженерные принципы
 
