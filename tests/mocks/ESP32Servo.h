@@ -8,13 +8,19 @@ class Servo
 public:
     Servo()
         : attached_(false), attachSucceeds_(true), channel_(0),
-          periodCalls_(0), attachCalls_(0), writeCalls_(0),
+          periodCalls_(0), attachCalls_(0), writeCalls_(0), detachCalls_(0),
           lastPeriodHz_(0), lastPin_(-1), lastMinimumPulseUs_(0),
           lastMaximumPulseUs_(0), lastWrittenPulseUs_(0)
     {
     }
 
     bool attached() const { return attached_; }
+
+    void detach()
+    {
+        ++detachCalls_;
+        attached_ = false;
+    }
 
     void setPeriodHertz(int hertz)
     {
@@ -45,6 +51,7 @@ public:
     int periodCalls() const { return periodCalls_; }
     int attachCalls() const { return attachCalls_; }
     int writeCalls() const { return writeCalls_; }
+    int detachCalls() const { return detachCalls_; }
     int lastPeriodHz() const { return lastPeriodHz_; }
     int lastPin() const { return lastPin_; }
     int lastMinimumPulseUs() const { return lastMinimumPulseUs_; }
@@ -58,6 +65,7 @@ private:
     int periodCalls_;
     int attachCalls_;
     int writeCalls_;
+    int detachCalls_;
     int lastPeriodHz_;
     int lastPin_;
     int lastMinimumPulseUs_;
