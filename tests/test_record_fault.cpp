@@ -68,6 +68,7 @@ int main()
     recordFault(snapshot, 0U, nullptr);
     assert(snapshot.faultCode == 0U);
     assert(snapshot.faultReason == nullptr);
+    assert(Serial.output.empty());
 
     // Остальные поля диагностического снимка не меняются.
     assert(snapshot.timestampUs == 123U);
