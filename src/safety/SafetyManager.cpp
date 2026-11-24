@@ -2,6 +2,7 @@
 
 #include "../sensors/SensorManager.h"
 #include "../orientation/OrientationEstimator.h"
+#include "../servo/ServoDriver.h"
 
 namespace gyrostab
 {
@@ -77,6 +78,14 @@ bool checkEstimatorHealth(const OrientationEstimate& estimate, uint32_t nowUs,
     }
 
     return validateOrientation(estimate, maximumNormDeviation);
+}
+
+bool checkCommandLimits(int targetPulseUs, int minimumPulseUs, int maximumPulseUs)
+{
+    int validatedTargetPulseUs = 0;
+    return limitServoPulse(targetPulseUs, minimumPulseUs, maximumPulseUs,
+                           validatedTargetPulseUs) &&
+           validatedTargetPulseUs == targetPulseUs;
 }
 
 } // namespace gyrostab

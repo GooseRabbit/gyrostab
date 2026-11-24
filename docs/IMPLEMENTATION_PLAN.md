@@ -337,7 +337,7 @@ Host-тесты `resetDeadZone()` прошли с GCC C++11 и `-Wall -Wextra -W
 2. `canRunController()` — [x] возвращает `true` только в состоянии `Active`; остальные и неизвестные состояния не разрешают расчёт.
 3. `checkSensorTimeout()` — [x] проверяет свежесть IMU через `isSampleFresh()`;
 4. `checkEstimatorHealth()` — [x] проверяет свежесть оценки и валидность quaternion;
-5. `checkCommandLimits()`;
+5. `checkCommandLimits()` — [x] отклоняет цель вне допустимых min/max, повторно используя `limitServoPulse()` без ограничения цели;
 6. `enterFault()`;
 7. `applySafeOutputPolicy()`.
 
@@ -356,6 +356,10 @@ Host-тесты `checkSensorTimeout()` прошли с GCC C++11, `-Wall -Wextra
 `checkEstimatorHealth()` принимает оценку `OrientationEstimate`, `nowUs`, `maximumAgeUs` и `maximumNormDeviation`. Сначала проверяет допустимость возрастного интервала и свежесть timestamp с помощью беззнакового вычитания, корректного при rollover `uint32_t`; затем передаёт оценку в `validateOrientation()`. Возвращает `true` только при свежей, отмеченной валидной оценке с конечным quaternion, норма которого укладывается в переданный допуск. Функция не меняет оценку и не выполняет переход в `FAULT` или действия с PWM.
 
 Host-тесты `checkEstimatorHealth()` прошли с GCC C++11, `-Wall -Wextra -Wpedantic -Werror`, затем повторены с AddressSanitizer и UndefinedBehaviorSanitizer. Проверены возрастная граница, просрочка, нулевой интервал, rollover, будущий timestamp, интервал от `2^31`, невалидный флаг, нулевой и неконечный quaternion, допуск нормы и неизменность исходной оценки. Arduino-сборка и аппаратная проверка не выполнялись.
+
+`checkCommandLimits()` принимает целевой импульс в микросекундах и заданные безопасные `minimumPulseUs`/`maximumPulseUs`. Она вызывает существующую `limitServoPulse()` во временную переменную и возвращает `true`, только если результат совпадает с исходной целью. Поэтому включённые границы принимаются, значение вне диапазона отклоняется, а не прижимается к границе. Проверка `limitServoPulse()` также отклоняет некорректные пределы ESP32Servo и пустой/обратный диапазон. Функция не меняет цель, не вычисляет новую команду и не отправляет PWM.
+
+Host-тесты `checkCommandLimits()` прошли с GCC C++11, `-Wall -Wextra -Wpedantic -Werror`, затем повторены с AddressSanitizer и UndefinedBehaviorSanitizer. Проверены внутренние и граничные значения, выход ниже/выше диапазона, `INT_MIN`/`INT_MAX`, крайние пределы API, недопустимые min/max и отсутствие PWM. Тест собран с полной реализацией `ServoDriver.cpp` и тестовой заглушкой ESP32Servo. Arduino-сборка и аппаратная проверка не выполнялись.
 
 Проверить потерю IMU, отключение SPI, некорректные данные, пропуск калибровки, ошибку оценки, чрезмерное значение `dt`, выход команды за пределы и перезапуск ESP32.
 

@@ -46,4 +46,8 @@ bool checkSensorTimeout(const ImuSample& sample, uint32_t nowUs, uint32_t maximu
 bool checkEstimatorHealth(const OrientationEstimate& estimate, uint32_t nowUs,
                           uint32_t maximumAgeUs, float maximumNormDeviation);
 
+// Проверяет, что целевой импульс уже находится в корректном диапазоне ESP32Servo и min/max.
+// Не ограничивает исходную цель и не отправляет PWM.
+bool checkCommandLimits(int targetPulseUs, int minimumPulseUs, int maximumPulseUs);
+
 } // namespace gyrostab
