@@ -24,8 +24,14 @@ bool beginServo(Servo& servo,
     // Нельзя использовать возвращаемый канал как bool: канал 0 допустим.
     servo.attach(signalPin, minimumPulseUs, maximumPulseUs);
 
-    // Проверяется состояние объекта ESP32Servo, но не форма реального PWM-сигнала.
+    // Проверяется состояние объекта ESP32Servo, но не форма реального PWM.
     return servo.attached();
+}
+
+void setServoTarget(int requestedPulseUs,
+                    int& pendingTargetPulseUs)
+{
+    pendingTargetPulseUs = requestedPulseUs;
 }
 
 } // namespace gyrostab
