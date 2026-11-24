@@ -1,6 +1,6 @@
 # План реализации прошивки Gyrostab
 
-**Статус:** реализованы и одобрены 32 из 58 запланированных функций (55,2%). Актуальный контрольный список: [PROGRESS.md](PROGRESS.md).  
+**Статус:** реализованы и одобрены 33 из 58 запланированных функций (56,9%). Актуальный контрольный список: [PROGRESS.md](PROGRESS.md).  
 **Рабочая ветка:** `main`. Новые ветки не создавать.
 
 ## 1. Соглашение о порядке работы
@@ -245,11 +245,15 @@ Host-проверки `writeServoPulse()` пройдены с GCC C++11 и `-Wal
 
 Host-проверки `disableServoOutput()` пройдены с GCC C++11 и `-Wall -Wextra -Wpedantic -Werror`, затем повторены с AddressSanitizer и UndefinedBehaviorSanitizer. Проверены отключение подключённого объекта, отсутствие повторного `detach()`, уже отключённый объект и отсутствие PWM-команд. Это host-проверка на mock ESP32Servo, не проверка физического сигнала или удержания механики.
 
+`computeControlError()` готова: вызывает `computeRelativeOrientation()` для расчёта `inverse(reference) * current`, затем передаёт полученный quaternion и `AxisConfig` в `projectErrorOnControlAxis()`. Результат — signed угловая ошибка вокруг управляемой оси в радианах. Существующая математика не дублируется; ось должна быть предварительно нормирована через `normalizeAxisConfig()`. Коэффициенты P/D, направление механики, gyro rate и PWM здесь не вычисляются. Если любая из двух функций отказывает, `errorRad` остаётся без изменения.
+
+Host-проверки `computeControlError()` пройдены с GCC C++11 и `-Wall -Wextra -Wpedantic -Werror`, затем повторены с AddressSanitizer и UndefinedBehaviorSanitizer. Проверены нулевая и положительная ошибка, порядок quaternion-умножения на неперестановочных поворотах, невалидные current/reference/axis/tolerance, неоднозначный 180-градусный swing и сохранение выхода при отказе. Это host-проверки с test-only поддержкой валидации; Arduino-сборка и проверка на аппаратуре не выполнялись.
+
 ## 8. Этап 6. Первый замкнутый P-D-контур
 
 Функции:
 
-1. `computeControlError()`;
+1. `computeControlError()` — [x] связывает вычисление относительной ориентации и проекцию ошибки на заранее нормированную управляемую ось; возвращает радианы и не изменяет выход при отказе.
 2. `computeDampingRate()`;
 3. `computePdCorrection()`;
 4. `validateControllerOutput()`;
