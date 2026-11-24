@@ -42,6 +42,7 @@
 - [x] `transformImuToPlatform()` — переносит вектор из координат IMU в координаты платформы с сохранением единиц.
 - [x] `captureReferenceOrientation()` — сохраняет валидную оценку кватерниона как опору по команде внешнего кода.
 - [x] `computeRelativeOrientation()` — вычисляет относительный кватернион `inverse(reference) * current`.
+- [x] `projectErrorOnControlAxis()` — извлекает signed twist error по заданной нормированной оси и возвращает кратчайший угол в радианах.
 - [ ] Минимальная сборка Arduino Sketch на целевой плате ESP32 Nano — ещё не проверена.
 - [x] `beginImu()` — SPI инициализация ICM-20948 через SparkFun Library.
 - [x] `configureImu()` — настройка акселерометра и гироскопа штатными методами SparkFun Library.
@@ -62,8 +63,8 @@
 - [x] `validateOrientation()` — проверка валидности и нормы рассчитанного quaternion без его изменения.
 - [x] `publishOrientationTelemetry()` — одна CSV-строка с метаданными и quaternion, включая valid-флаг.
 - [ ] Arduino-сборка целевой платы и аппаратная проверка IMU — ещё не выполнены.
-- Следующая функция по плану: `projectErrorOnControlAxis()`.
-- Общий прогресс реализации функций: 24/58 (41,4%); подробности — в [PROGRESS.md](docs/PROGRESS.md).
+- Следующая функция по плану: `projectGyroRateOnControlAxis()`.
+- Общий прогресс реализации функций: 25/58 (43,1%); подробности — в [PROGRESS.md](docs/PROGRESS.md).
 
 ## Главные инженерные принципы
 
