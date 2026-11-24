@@ -18,4 +18,11 @@ bool beginServo(Servo& servo,
 void setServoTarget(int requestedPulseUs,
                     int& pendingTargetPulseUs);
 
+// Ограничивает запрос переданными безопасными min/max импульсами.
+// При неверных границах возвращает false и не меняет выход.
+bool limitServoPulse(int requestedPulseUs,
+                     int minimumPulseUs,
+                     int maximumPulseUs,
+                     int& limitedPulseUs);
+
 } // namespace gyrostab
