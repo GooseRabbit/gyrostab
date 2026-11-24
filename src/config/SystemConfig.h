@@ -73,4 +73,8 @@ struct SystemConfig
 // неподтверждённые настройки в явное не настроенное состояние.
 void loadDefaultConfig(SystemConfig& config);
 
+// Проверяет заполненность, диапазоны и согласованность всей конфигурации.
+// Не нормирует и не исправляет входные поля; false означает, что конфигурацию нельзя использовать.
+bool validateConfig(const SystemConfig& config);
+
 } // namespace gyrostab
