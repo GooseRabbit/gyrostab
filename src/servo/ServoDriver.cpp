@@ -109,4 +109,25 @@ bool limitServoSlewRate(int currentPulseUs,
     return true;
 }
 
+
+bool writeServoPulse(Servo& servo,
+                     int pulseUs,
+                     int minimumPulseUs,
+                     int maximumPulseUs)
+{
+    if (!servo.attached() ||
+        minimumPulseUs < MIN_PULSE_WIDTH ||
+        maximumPulseUs > MAX_PULSE_WIDTH ||
+        minimumPulseUs >= maximumPulseUs ||
+        pulseUs < minimumPulseUs ||
+        pulseUs > maximumPulseUs)
+    {
+        return false;
+    }
+
+    // writeMicroseconds() не возвращает статус физического PWM-сигнала.
+    servo.writeMicroseconds(pulseUs);
+    return true;
+}
+
 } // namespace gyrostab
