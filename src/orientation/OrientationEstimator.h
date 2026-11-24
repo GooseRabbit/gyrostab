@@ -29,6 +29,10 @@ struct OrientationEstimate
 // Задаёт нейтральное начальное состояние, не объявляя его валидной оценкой.
 void initializeEstimator(OrientationEstimate& estimate);
 
+// Сбрасывает всю оценку до нейтрального состояния для повторной инициализации.
+// Использует тот же контракт, что initializeEstimator().
+void resetOrientation(OrientationEstimate& estimate);
+
 // Интегрирует bias-corrected gyro. maximumDeltaTimeUs задаётся вызывающим кодом.
 // Первый валидный образец только привязывает время/sequence и начинает относительный отсчёт.
 // Ориентация задаётся body-to-world кватернионом; инкремент домножается справа.

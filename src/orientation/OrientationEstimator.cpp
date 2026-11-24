@@ -17,6 +17,11 @@ void initializeEstimator(OrientationEstimate& estimate)
     estimate = initial;
 }
 
+void resetOrientation(OrientationEstimate& estimate)
+{
+    initializeEstimator(estimate);
+}
+
 bool updateOrientation(OrientationEstimate& estimate, const ImuSample& sample,
                        const Vector3f& gyroBiasRadPerSec,
                        uint32_t maximumDeltaTimeUs)
