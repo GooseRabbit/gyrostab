@@ -16,9 +16,9 @@ struct SensorHealth
     uint32_t lastSampleSequence;
 };
 
-// Сбрасывает кэш образца и повторно инициализирует IMU.
+// Сбрасывает кэш образца и повторно инициализирует IMU по той же BoardConfig.
 // После успешного сброса configureImu() нужно вызвать повторно.
-bool resetImuDataPath();
+bool resetImuDataPath(const BoardConfig& board);
 
 // Проверяет обязательные каналы IMU и диапазоны, допустимые выбранным full-scale.
 // Для проверки нужно передавать ту же ImuConfig, с которой настроен датчик.

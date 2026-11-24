@@ -27,7 +27,7 @@ bool hasDistinctNonNegativePins(const BoardConfig& board)
 
     for (unsigned int i = 0; i < sizeof(pins) / sizeof(pins[0]); ++i)
     {
-        if (pins[i] < 0)
+        if (pins[i] < 0 || pins[i] > 127)
         {
             return false;
         }
@@ -72,13 +72,15 @@ void loadDefaultConfig(SystemConfig& config)
     // настройки остаются placeholders и не должны использоваться как рабочие.
     SystemConfig candidate = {};
 
-    // Номинальная распиновка из текущего драйвера и архитектуры проекта.
+    // Подтверждённая пользователем распайка текущего ESP32:
+    // IO18 -> SCL/SCLK, IO19 -> ADO/SDO, IO23 -> SDA/SDI,
+    // IO5 -> NCS, IO25 -> управляющий сигнал MG90S.
     candidate.board.spiSckPin = 18;
     candidate.board.spiMisoPin = 19;
     candidate.board.spiMosiPin = 23;
     candidate.board.imuChipSelectPin = 5;
     candidate.board.servoSignalPin = 25;
-    candidate.board.pinsVerified = false;
+    candidate.board.pinsVerified = true;
 
     // Только после полной подготовки заменяем переданную конфигурацию.
     config = candidate;
@@ -86,7 +88,7 @@ void loadDefaultConfig(SystemConfig& config)
 
 bool validateConfig(const SystemConfig& config)
 {
-    // Номинальные GPIO нельзя использовать до сверки с реальной проводкой.
+    // Распиновка подтверждена пользователем; проверяем диапазон и уникальность GPIO.
     if (!config.board.pinsVerified || !hasDistinctNonNegativePins(config.board))
     {
         return false;

@@ -95,6 +95,8 @@ gyrostab::ControllerConfig makeConfig()
     config.minimumPulseUs = 1000;
     config.maximumPulseUs = 2000;
     config.maximumChangeUsPerSecond = 500.0f;
+    config.deadZoneEnterThresholdRad = 0.10f;
+    config.deadZoneExitThresholdRad = 0.20f;
     return config;
 }
 
@@ -176,7 +178,9 @@ void testRejectsRepeatedAndOutOfOrderSequencesButAllowsRollover()
     const gyrostab::ControllerConfig config = makeConfig();
     int targetPulseUs = 456;
 
-    gyrostab::ControllerState state = {true, 10U};
+    gyrostab::ControllerState state = {};
+    state.hasProcessedSample = true;
+    state.lastProcessedSampleSequence = 10U;
     gyrostab::ImuSample sample = makeSample(1000U, 10U);
     gyrostab::OrientationEstimate orientation = makeOrientation(sample);
     assert(!gyrostab::runControlStep(orientation, reference, sample, config,
@@ -190,7 +194,9 @@ void testRejectsRepeatedAndOutOfOrderSequencesButAllowsRollover()
                                      1001U, 1500, 1000U, state, targetPulseUs));
     assert(targetPulseUs == 456);
 
-    state = {true, std::numeric_limits<uint32_t>::max()};
+    state = {};
+    state.hasProcessedSample = true;
+    state.lastProcessedSampleSequence = std::numeric_limits<uint32_t>::max();
     sample = makeSample(1002U, 0U);
     orientation = makeOrientation(sample);
     assert(gyrostab::runControlStep(orientation, reference, sample, config,
@@ -241,6 +247,91 @@ void testEveryFailedControlStagePreservesOutputAndState()
                                      1000U, 1500, 1000U, state, targetPulseUs));
     assert(targetPulseUs == 777 && !state.hasProcessedSample);
     assert(hooks.limitsCalls == 1);
+}
+
+
+void testDeadZoneSuppressesOnlyPositionAndUsesHysteresis()
+{
+    resetHooks();
+    const gyrostab::ReferenceOrientation reference = makeReference();
+    const gyrostab::ControllerConfig config = makeConfig();
+    gyrostab::ControllerState state = {};
+    int targetPulseUs = 0;
+
+    gyrostab::ImuSample sample = makeSample(1000U, 1U);
+    gyrostab::OrientationEstimate orientation = makeOrientation(sample);
+    hooks.errorRad = 0.05f;
+    assert(gyrostab::runControlStep(orientation, reference, sample, config,
+                                    1000U, 1500, 1000U, state, targetPulseUs));
+    assert(state.deadZone.active);
+    assert(hooks.receivedErrorRad == 0.0f);
+    assert(hooks.receivedRateRadPerSec == hooks.rateRadPerSec);
+
+    resetHooks();
+    hooks.errorRad = 0.15f;
+    sample = makeSample(2000U, 2U);
+    orientation = makeOrientation(sample);
+    assert(gyrostab::runControlStep(orientation, reference, sample, config,
+                                    2000U, 1500, 1000U, state, targetPulseUs));
+    assert(state.deadZone.active);
+    assert(hooks.receivedErrorRad == 0.0f);
+
+    resetHooks();
+    hooks.errorRad = 0.20f;
+    sample = makeSample(3000U, 3U);
+    orientation = makeOrientation(sample);
+    assert(gyrostab::runControlStep(orientation, reference, sample, config,
+                                    3000U, 1500, 1000U, state, targetPulseUs));
+    assert(state.deadZone.active);
+    assert(hooks.receivedErrorRad == 0.0f);
+
+    resetHooks();
+    hooks.errorRad = 0.21f;
+    sample = makeSample(4000U, 4U);
+    orientation = makeOrientation(sample);
+    assert(gyrostab::runControlStep(orientation, reference, sample, config,
+                                    4000U, 1500, 1000U, state, targetPulseUs));
+    assert(!state.deadZone.active);
+    assert(hooks.receivedErrorRad == hooks.errorRad);
+    assert(hooks.receivedRateRadPerSec == hooks.rateRadPerSec);
+}
+
+void testDeadZoneStateIsNotCommittedWhenLaterStageFails()
+{
+    resetHooks();
+    hooks.errorRad = 0.05f;
+    hooks.rateResult = false;
+    const gyrostab::ImuSample sample = makeSample(1000U, 1U);
+    const gyrostab::OrientationEstimate orientation = makeOrientation(sample);
+    const gyrostab::ReferenceOrientation reference = makeReference();
+    const gyrostab::ControllerConfig config = makeConfig();
+    gyrostab::ControllerState state = {};
+    int targetPulseUs = 765;
+
+    assert(!gyrostab::runControlStep(orientation, reference, sample, config,
+                                     1000U, 1500, 1000U, state, targetPulseUs));
+    assert(!state.deadZone.active);
+    assert(!state.hasProcessedSample);
+    assert(targetPulseUs == 765);
+}
+
+void testDeadZoneRejectsInvalidThresholdsWithoutStateChanges()
+{
+    resetHooks();
+    const gyrostab::ImuSample sample = makeSample(1000U, 1U);
+    const gyrostab::OrientationEstimate orientation = makeOrientation(sample);
+    const gyrostab::ReferenceOrientation reference = makeReference();
+    gyrostab::ControllerConfig config = makeConfig();
+    config.deadZoneExitThresholdRad = config.deadZoneEnterThresholdRad;
+    gyrostab::ControllerState state = {};
+    int targetPulseUs = 876;
+
+    assert(!gyrostab::runControlStep(orientation, reference, sample, config,
+                                     1000U, 1500, 1000U, state, targetPulseUs));
+    assert(!state.deadZone.active);
+    assert(!state.hasProcessedSample);
+    assert(targetPulseUs == 876);
+    assert(hooks.rateCalls == 0);
 }
 
 } // namespace
@@ -330,6 +421,9 @@ int main()
     testRejectsStaleFutureInvalidAndMismatchedSamples();
     testRejectsRepeatedAndOutOfOrderSequencesButAllowsRollover();
     testEveryFailedControlStagePreservesOutputAndState();
+    testDeadZoneSuppressesOnlyPositionAndUsesHysteresis();
+    testDeadZoneStateIsNotCommittedWhenLaterStageFails();
+    testDeadZoneRejectsInvalidThresholdsWithoutStateChanges();
     std::puts("runControlStep tests passed");
     return 0;
 }

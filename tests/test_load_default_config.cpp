@@ -43,13 +43,13 @@ int main()
 
     loadDefaultConfig(config);
 
-    // Загружается известная распиновка, но она явно остаётся неподтверждённой.
+    // Загружается распайка, подтверждённая пользователем для этой платы.
     assert(config.board.spiSckPin == 18);
     assert(config.board.spiMisoPin == 19);
     assert(config.board.spiMosiPin == 23);
     assert(config.board.imuChipSelectPin == 5);
     assert(config.board.servoSignalPin == 25);
-    assert(!config.board.pinsVerified);
+    assert(config.board.pinsVerified);
 
     // Неутверждённые параметры IMU не заменяются произвольным режимом.
     assert(config.imu.fullScale.a == 0U);
@@ -106,7 +106,7 @@ int main()
     assert(config.board.spiSckPin == 18);
     assert(config.control.proportionalGainUsPerRad == 0.0f);
     assert(config.servo.centerPulseUs == 0);
-    assert(!config.board.pinsVerified);
+    assert(config.board.pinsVerified);
 
     std::puts("loadDefaultConfig tests passed");
     return 0;

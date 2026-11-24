@@ -1,5 +1,7 @@
 #include "SensorManager.h"
 
+#include "../config/SystemConfig.h"
+
 #include <cmath>
 
 namespace gyrostab
@@ -13,7 +15,7 @@ bool hasLatestSample = false;
 
 } // namespace
 
-bool resetImuDataPath()
+bool resetImuDataPath(const BoardConfig& board)
 {
     // Старый образец больше нельзя считать актуальным даже при неудаче перезапуска.
     latestSample = {};
@@ -21,7 +23,7 @@ bool resetImuDataPath()
 
     // beginImu() повторяет штатный запуск SparkFun, включая программный сброс датчика.
     // После него настройки должны быть заново применены вызывающим кодом.
-    return beginImu();
+    return beginImu(board);
 }
 
 bool validateSensorSample(const ImuSample& sample, const ImuConfig& config)

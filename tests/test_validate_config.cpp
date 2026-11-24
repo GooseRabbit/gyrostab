@@ -67,7 +67,7 @@ void testDefaultProfileIsNotReadyForUse()
     gyrostab::SystemConfig config = makeValidConfig();
     gyrostab::loadDefaultConfig(config);
     assert(!gyrostab::validateConfig(config));
-    assert(!config.board.pinsVerified);
+    assert(config.board.pinsVerified);
     assert(!config.imuSettingsConfigured);
     assert(!config.controlAxisConfigured);
     assert(!config.mountingConfigured);
@@ -84,6 +84,10 @@ void testRejectsBoardProblems()
 
     config = makeValidConfig();
     config.board.spiSckPin = -1;
+    assert(!gyrostab::validateConfig(config));
+
+    config = makeValidConfig();
+    config.board.spiSckPin = 128;
     assert(!gyrostab::validateConfig(config));
 
     config = makeValidConfig();

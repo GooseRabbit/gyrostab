@@ -7,6 +7,8 @@
 namespace gyrostab
 {
 
+struct BoardConfig;
+
 // Параметры акселерометра и гироскопа в формате библиотеки SparkFun.
 // sampleRateDivider — делители частоты, а не значения частоты в герцах.
 struct ImuConfig
@@ -33,9 +35,10 @@ struct ImuSample
     bool magnetometerValid;
 };
 
-// Запускает SPI и инициализирует ICM-20948 через библиотеку SparkFun.
-// Возвращает true только при успешной инициализации датчика.
-bool beginImu();
+// Запускает SPI и ICM-20948 по GPIO из подтверждённой BoardConfig.
+// GPIO передаются в SPI.begin() как номера GPIO, а не номера Arduino-пинов.
+// Возвращает false при неподтверждённой/некорректной распиновке или ошибке датчика.
+bool beginImu(const BoardConfig& board);
 
 // Применяет настройки акселерометра и гироскопа.
 // Перед вызовом должен успешно завершиться beginImu().

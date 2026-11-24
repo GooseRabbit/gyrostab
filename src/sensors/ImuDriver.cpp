@@ -3,16 +3,25 @@
 #include <Arduino.h>
 #include <SPI.h>
 
+#include "../config/SystemConfig.h"
+
 namespace gyrostab
 {
 namespace
 {
-// Текущая распиновка SPI из конфигурации проекта.
-// Перед аппаратным запуском необходимо сверить её с фактическим подключением.
-constexpr uint8_t kImuSckPin = 18;
-constexpr uint8_t kImuMisoPin = 19;
-constexpr uint8_t kImuMosiPin = 23;
-constexpr uint8_t kImuCsPin = 5;
+bool hasValidBoardPins(const BoardConfig& board)
+{
+    if (!board.pinsVerified) return false;
+    const int pins[] = {board.spiSckPin, board.spiMisoPin, board.spiMosiPin,
+                        board.imuChipSelectPin, board.servoSignalPin};
+    for (unsigned int i = 0; i < sizeof(pins) / sizeof(pins[0]); ++i)
+    {
+        if (pins[i] < 0 || pins[i] > 127) return false;
+        for (unsigned int j = i + 1U; j < sizeof(pins) / sizeof(pins[0]); ++j)
+            if (pins[i] == pins[j]) return false;
+    }
+    return true;
+}
 
 constexpr float kMilliGToMetersPerSecondSquared = 0.00980665f;
 constexpr float kDegreesToRadians = 0.01745329252f;
@@ -25,15 +34,23 @@ bool imuBeginAttempted = false;
 uint32_t sampleSequence = 0;
 } // namespace
 
-bool beginImu()
+bool beginImu(const BoardConfig& board)
 {
     imuBeginAttempted = true;
     imuInitialized = false;
     imuConfigured = false;
     sampleSequence = 0;
 
-    // Назначаем SPI-пины ESP32 явно, не полагаясь на выводы по умолчанию платы.
-    if (!SPI.begin(kImuSckPin, kImuMisoPin, kImuMosiPin, kImuCsPin))
+    if (!hasValidBoardPins(board))
+    {
+        imu.status = ICM_20948_Stat_Err;
+        return false;
+    }
+
+    if (!SPI.begin(static_cast<int8_t>(board.spiSckPin),
+                   static_cast<int8_t>(board.spiMisoPin),
+                   static_cast<int8_t>(board.spiMosiPin),
+                   static_cast<int8_t>(board.imuChipSelectPin)))
     {
         imu.status = ICM_20948_Stat_Err;
         return false;
@@ -41,7 +58,8 @@ bool beginImu()
 
     // SparkFun begin() проверяет идентификатор ICM-20948 и выполняет
     // штатную начальную настройку библиотеки. Частота SPI по умолчанию — 4 МГц.
-    const ICM_20948_Status_e status = imu.begin(kImuCsPin, SPI);
+    const ICM_20948_Status_e status =
+        imu.begin(static_cast<uint8_t>(board.imuChipSelectPin), SPI);
     imuInitialized = (status == ICM_20948_Stat_Ok);
 
     return imuInitialized;

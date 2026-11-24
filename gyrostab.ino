@@ -1,6 +1,12 @@
 #include <Arduino.h>
-#include "src/geometry/Vector3.h"
+
+#include "src/config/SystemConfig.h"
 #include "src/sensors/ImuDriver.h"
+
+namespace
+{
+gyrostab::SystemConfig systemConfig = {};
+}
 
 // Минимальная точка входа Arduino.
 // На этом этапе запускается только IMU; управление сервоприводом отключено.
@@ -8,7 +14,9 @@ void setup()
 {
     Serial.begin(115200);
 
-    if (gyrostab::beginImu())
+    gyrostab::loadDefaultConfig(systemConfig);
+
+    if (gyrostab::beginImu(systemConfig.board))
     {
         Serial.println("ICM-20948 initialization: OK");
     }
@@ -20,5 +28,5 @@ void setup()
 
 void loop()
 {
-    // Чтение измерений добавляется отдельной функцией readImuSample().
+    // Полный цикл управления будет подключён после target-сборки и проверки IMU.
 }
