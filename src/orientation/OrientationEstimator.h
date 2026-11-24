@@ -43,4 +43,10 @@ bool updateOrientation(OrientationEstimate& estimate, const ImuSample& sample,
 bool validateOrientation(const OrientationEstimate& estimate,
                          float maximumNormDeviation);
 
+// Возвращает копию оценки, если valid и quaternion проходит явный допуск нормы.
+// Проверку возраста выполняет отдельно checkEstimatorHealth(); при false output не меняется.
+bool getOrientation(const OrientationEstimate& latestEstimate,
+                    float maximumNormDeviation,
+                    OrientationEstimate& output);
+
 } // namespace gyrostab

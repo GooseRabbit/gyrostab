@@ -152,4 +152,17 @@ bool validateOrientation(const OrientationEstimate& estimate,
     return std::fabs(norm - 1.0) <= static_cast<double>(maximumNormDeviation);
 }
 
+bool getOrientation(const OrientationEstimate& latestEstimate,
+                    float maximumNormDeviation,
+                    OrientationEstimate& output)
+{
+    if (!validateOrientation(latestEstimate, maximumNormDeviation))
+    {
+        return false;
+    }
+
+    output = latestEstimate;
+    return true;
+}
+
 } // namespace gyrostab
