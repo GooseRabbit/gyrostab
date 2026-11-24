@@ -77,4 +77,13 @@ void recordFault(TelemetrySnapshot& snapshot, uint16_t faultCode, const char* fa
     snapshot.faultReason = faultReason;
 }
 
+void updateCounters(DiagnosticCounters& counters, uint32_t newPackets,
+                    uint32_t spiErrors, uint32_t missedSamples, uint32_t timeouts)
+{
+    counters.newPackets += newPackets;
+    counters.spiErrors += spiErrors;
+    counters.missedSamples += missedSamples;
+    counters.timeouts += timeouts;
+}
+
 } // namespace gyrostab
