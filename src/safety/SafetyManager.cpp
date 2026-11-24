@@ -47,4 +47,9 @@ bool updateSafetyState(SafetyState& state, const SafetyStateInputs& inputs)
     return false;
 }
 
+bool canRunController(SafetyState state)
+{
+    return state == SafetyState::Active;
+}
+
 } // namespace gyrostab
