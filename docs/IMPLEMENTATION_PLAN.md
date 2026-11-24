@@ -1,6 +1,6 @@
 # План реализации прошивки Gyrostab
 
-**Статус:** реализованы и одобрены 33 из 58 запланированных функций (56,9%). Актуальный контрольный список: [PROGRESS.md](PROGRESS.md).  
+**Статус:** реализованы и одобрены 34 из 58 запланированных функций (58,6%). Актуальный контрольный список: [PROGRESS.md](PROGRESS.md).  
 **Рабочая ветка:** `main`. Новые ветки не создавать.
 
 ## 1. Соглашение о порядке работы
@@ -247,14 +247,18 @@ Host-проверки `disableServoOutput()` пройдены с GCC C++11 и `-
 
 `computeControlError()` готова: вызывает `computeRelativeOrientation()` для расчёта `inverse(reference) * current`, затем передаёт полученный quaternion и `AxisConfig` в `projectErrorOnControlAxis()`. Результат — signed угловая ошибка вокруг управляемой оси в радианах. Существующая математика не дублируется; ось должна быть предварительно нормирована через `normalizeAxisConfig()`. Коэффициенты P/D, направление механики, gyro rate и PWM здесь не вычисляются. Если любая из двух функций отказывает, `errorRad` остаётся без изменения.
 
+`computeDampingRate()` готова: проверяет `sample.gyroscopeValid` и передаёт `sample.angularVelocityRadPerSec`, `gyroBiasRadPerSec` и `AxisConfig` в существующую `projectGyroRateOnControlAxis()`. Результат — signed угловая скорость вокруг управляемой оси в рад/с. Freshness и timestamp/sequence здесь не перепроверяются: вызывающий код должен предварительно получить свежий образец через существующую проверку сенсорного кэша. Функция не умножает скорость на `Kd`, не меняет её знак, не хранит состояние и не формирует PWM. При отказе выход остаётся неизменным.
+
 Host-проверки `computeControlError()` пройдены с GCC C++11 и `-Wall -Wextra -Wpedantic -Werror`, затем повторены с AddressSanitizer и UndefinedBehaviorSanitizer. Проверены нулевая и положительная ошибка, порядок quaternion-умножения на неперестановочных поворотах, невалидные current/reference/axis/tolerance, неоднозначный 180-градусный swing и сохранение выхода при отказе. Это host-проверки с test-only поддержкой валидации; Arduino-сборка и проверка на аппаратуре не выполнялись.
+
+Host-проверки `computeDampingRate()` пройдены с GCC C++11 и `-Wall -Wextra -Wpedantic -Werror`, затем повторены с AddressSanitizer и UndefinedBehaviorSanitizer. Проверены bias correction и проекция по X/Y/диагональной/обратной осям, отсутствие валидного gyro, NaN/Inf в измерении и bias, некорректная ось и допуск, неизменность входов и выхода при отказе. Это host-проверки с минимальным test-only mock типа ICM-20948; Arduino-сборка и физическая проверка IMU не выполнялись.
 
 ## 8. Этап 6. Первый замкнутый P-D-контур
 
 Функции:
 
 1. `computeControlError()` — [x] связывает вычисление относительной ориентации и проекцию ошибки на заранее нормированную управляемую ось; возвращает радианы и не изменяет выход при отказе.
-2. `computeDampingRate()`;
+2. `computeDampingRate()` — [x] проверяет наличие валидного gyro и получает signed angular rate вдоль предварительно нормированной управляемой оси, вычитая bias через существующую проекцию.
 3. `computePdCorrection()`;
 4. `validateControllerOutput()`;
 5. `applyServoCommandLimits()`;
