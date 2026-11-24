@@ -19,4 +19,11 @@ bool updateDeadZoneState(float absoluteErrorRad,
                          float exitThresholdRad,
                          DeadZoneState& state);
 
+// Подавляет только позиционную ошибку при активной dead-zone.
+// При неактивной зоне сохраняет исходную величину и знак.
+// При неконечной ошибке outputErrorRad остаётся без изменения.
+bool applyDeadZone(float positionalErrorRad,
+                   const DeadZoneState& state,
+                   float& outputErrorRad);
+
 } // namespace gyrostab
