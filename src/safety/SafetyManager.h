@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 
+class Servo;
+
 namespace gyrostab
 {
 
@@ -52,5 +54,11 @@ bool checkCommandLimits(int targetPulseUs, int minimumPulseUs, int maximumPulseU
 
 // Защёлкивает SafetyState::Fault; причину отказа сохраняет отдельная функция диагностики.
 void enterFault(SafetyState& state);
+
+// В FAULT повторно подаёт последний принятый импульс, не меняя положение и не отключая PWM.
+// lastCommandPulseUs — последняя успешно отправленная команда; min/max — активные пределы.
+// Возвращает false вне FAULT, при отключённой серве или недопустимой команде.
+bool applySafeOutputPolicy(SafetyState state, ::Servo& servo,
+                           int lastCommandPulseUs, int minimumPulseUs, int maximumPulseUs);
 
 } // namespace gyrostab

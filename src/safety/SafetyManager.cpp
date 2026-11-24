@@ -94,4 +94,16 @@ void enterFault(SafetyState& state)
     state = SafetyState::Fault;
 }
 
+bool applySafeOutputPolicy(SafetyState state, ::Servo& servo,
+                           int lastCommandPulseUs, int minimumPulseUs, int maximumPulseUs)
+{
+    if (state != SafetyState::Fault)
+    {
+        return false;
+    }
+
+    // Сохраняем последнюю принятую команду; не центрируем и не отсоединяем серву.
+    return writeServoPulse(servo, lastCommandPulseUs, minimumPulseUs, maximumPulseUs);
+}
+
 } // namespace gyrostab
