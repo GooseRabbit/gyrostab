@@ -130,4 +130,15 @@ bool writeServoPulse(Servo& servo,
     return true;
 }
 
+bool disableServoOutput(Servo& servo)
+{
+    if (servo.attached())
+    {
+        servo.detach();
+    }
+
+    // Подтверждается только состояние объекта ESP32Servo, не механическая фиксация.
+    return !servo.attached();
+}
+
 } // namespace gyrostab
