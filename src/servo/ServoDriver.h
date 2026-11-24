@@ -33,4 +33,11 @@ bool limitServoSlewRate(int currentPulseUs,
                         uint32_t elapsedTimeUs,
                         int& limitedPulseUs);
 
+// Выдаёт уже ограниченный PWM-импульс только в пределах переданных min/max.
+// При неподключённой серве или некорректной команде PWM не отправляется.
+bool writeServoPulse(Servo& servo,
+                     int pulseUs,
+                     int minimumPulseUs,
+                     int maximumPulseUs);
+
 } // namespace gyrostab
