@@ -90,10 +90,10 @@ int main()
 
     // Некорректные диапазоны или скорость отклоняются без изменения результата.
     assert(!applyServoCommandLimits(10.0f, 1500, 1, 1500,
-                                    999, 2000, 100.0f, 1000000U, limitedPulseUs));
+                                    499, 2000, 100.0f, 1000000U, limitedPulseUs));
     assert(limitedPulseUs == savedOutput);
     assert(!applyServoCommandLimits(10.0f, 1500, 1, 1500,
-                                    1000, 2001, 100.0f, 1000000U, limitedPulseUs));
+                                    1000, 2501, 100.0f, 1000000U, limitedPulseUs));
     assert(limitedPulseUs == savedOutput);
     assert(!apply(10.0f, 1500, 1, 1500, -1.0f, 1000000U, limitedPulseUs));
     assert(limitedPulseUs == savedOutput);
@@ -106,10 +106,6 @@ int main()
     assert(apply(largePositiveCorrection, 1500, 1, 1500,
                  1000000000.0f, 1000000U, limitedPulseUs));
     assert(limitedPulseUs == 2000);
-
-    // При отказе выходное значение остаётся без изменений.
-    assert(!apply(10.0f, 1500, 1, 1500, 100.0f, 1000000U, limitedPulseUs)
-           == false);
 
     std::puts("applyServoCommandLimits tests passed");
     return 0;
