@@ -93,7 +93,8 @@ Host-тесты `validateConfig()` прошли с GCC C++11, `-Wall -Wextra -Wp
 2. `configureImu()`;
 3. `readImuSample()`;
 4. `checkImuStatus()`;
-5. `validateSensorSample()`;
+5. `resetImuDataPath()`;
+6. `validateSensorSample()`;
 6. `isSampleFresh()`;
 7. `updateSensorData()`;
 8. `getLatestSample()`;
@@ -108,6 +109,7 @@ Host-тесты `validateConfig()` прошли с GCC C++11, `-Wall -Wextra -Wp
 - [x] `configureImu()` — реализована и добавлена в `main`; параметры передаются через `ImuConfig`, без неутверждённых значений по умолчанию.
 - [x] `readImuSample()` — получает только новый образец, формирует timestamp/sequence, переводит значения в единицы проекта и проверяет готовность магнитометра.
 - [x] `checkImuStatus()` — возвращает последний статус SparkFun без дополнительного обмена SPI; `NoData` означает отсутствие нового образца, а не самостоятельную аппаратную неисправность.
+- [x] `resetImuDataPath()` — инвалидирует кэш менеджера датчика и повторно запускает IMU через `beginImu()`; после успешного перезапуска вызывающий код повторно применяет `configureImu()`. Текущий режим использует прямой опрос, FIFO/DMP не включены.
 - [x] `validateSensorSample()` — проверяет обязательные каналы, конечность значений и пределы выбранного full-scale; магнитометр остаётся необязательным.
 - [x] `isSampleFresh()` — проверяет возраст образца с учётом rollover `uint32_t`; предел возраста и текущее время передаются вызывающим кодом.
 - [x] `updateSensorData()` — опрашивает драйвер один раз, проверяет новый пакет и сохраняет только валидный образец; при отказе кэш не заменяется.
@@ -121,9 +123,12 @@ Host-тесты `validateConfig()` прошли с GCC C++11, `-Wall -Wextra -Wp
 - [x] Host-проверки `getSensorHealth()`: пустой кэш, Unknown/OK/Err, свежесть на границе, устаревание, недопустимый интервал и сохранение метаданных.
 - [x] Host-проверки `publishRawImuTelemetry()`: фиксированные 14 полей CSV, точность чисел, флаги валидности и сохранение входного образца.
 - [x] Host-проверки драйвера на mock-интерфейсе: настройки датчика, чтение нового образца, статус Unknown до запуска, ошибки SPI и WrongID, NoData, ошибка чтения и восстановление OK.
+- [x] Host-проверки `resetImuDataPath()`: кэш удаляется до попытки перезапуска, старый образец недоступен после успеха/ошибки, повторная настройка обязательна, sequence начинается заново, ошибки SPI/WrongID и повторное восстановление.
 - [x] GCC с `-Werror` и повторная проверка ASan/UBSan для host-макета, включая `getLatestSample()`, `updateSensorData()`, `isSampleFresh()`, `validateSensorSample()`, `checkImuStatus()` и предыдущие тесты драйвера.
 - [x] Host-сборка `publishRawImuTelemetry()` с `-Wall -Wextra -Wpedantic -Werror`, AddressSanitizer и UndefinedBehaviorSanitizer.
 - [ ] Полная Arduino-сборка ESP32 Nano и проверка на физическом датчике — не выполнялись.
+
+`resetImuDataPath()` выполняется синхронно: повторный запуск SparkFun `begin()` включает `startupDefault()` с программным сбросом датчика и штатной задержкой около 50 мс. Не вызывать в каждом проходе управляющего цикла. Текущий режим опрашивает сырые регистры через `dataReady()`/`getAGMT()` и не использует FIFO или DMP; при будущем переходе на FIFO этот сброс необходимо расширить с учётом очереди.
 
 Проверки:
 

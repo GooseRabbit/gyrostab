@@ -13,6 +13,17 @@ bool hasLatestSample = false;
 
 } // namespace
 
+bool resetImuDataPath()
+{
+    // Старый образец больше нельзя считать актуальным даже при неудаче перезапуска.
+    latestSample = {};
+    hasLatestSample = false;
+
+    // beginImu() повторяет штатный запуск SparkFun, включая программный сброс датчика.
+    // После него настройки должны быть заново применены вызывающим кодом.
+    return beginImu();
+}
+
 bool validateSensorSample(const ImuSample& sample, const ImuConfig& config)
 {
     if (!sample.accelerometerValid || !sample.gyroscopeValid)
