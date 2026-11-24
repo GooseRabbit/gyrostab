@@ -10,7 +10,7 @@ public:
         : attached_(false), attachSucceeds_(true), channel_(0),
           periodCalls_(0), attachCalls_(0), writeCalls_(0),
           lastPeriodHz_(0), lastPin_(-1), lastMinimumPulseUs_(0),
-          lastMaximumPulseUs_(0)
+          lastMaximumPulseUs_(0), lastWrittenPulseUs_(0)
     {
     }
 
@@ -32,9 +32,10 @@ public:
         return channel_;
     }
 
-    void writeMicroseconds(int)
+    void writeMicroseconds(int pulseUs)
     {
         ++writeCalls_;
+        lastWrittenPulseUs_ = pulseUs;
     }
 
     void setAttachSucceeds(bool value) { attachSucceeds_ = value; }
@@ -48,6 +49,7 @@ public:
     int lastPin() const { return lastPin_; }
     int lastMinimumPulseUs() const { return lastMinimumPulseUs_; }
     int lastMaximumPulseUs() const { return lastMaximumPulseUs_; }
+    int lastWrittenPulseUs() const { return lastWrittenPulseUs_; }
 
 private:
     bool attached_;
@@ -60,4 +62,5 @@ private:
     int lastPin_;
     int lastMinimumPulseUs_;
     int lastMaximumPulseUs_;
+    int lastWrittenPulseUs_;
 };
