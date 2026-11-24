@@ -6,6 +6,7 @@ namespace gyrostab
 {
 
 struct ImuSample;
+struct OrientationEstimate;
 
 // Состояния жизненного цикла безопасности, описанные в архитектуре проекта.
 enum class SafetyState : uint8_t
@@ -39,5 +40,10 @@ bool canRunController(SafetyState state);
 // Возвращает true, если обязательные каналы IMU присутствуют и образец свежий.
 // Проверка использует общую логику isSampleFresh() и не меняет образец или SafetyState.
 bool checkSensorTimeout(const ImuSample& sample, uint32_t nowUs, uint32_t maximumAgeUs);
+
+// Возвращает true, если оценка свежая и quaternion проходит проверку нормы.
+// Не изменяет оценку, состояние безопасности или выход сервопривода.
+bool checkEstimatorHealth(const OrientationEstimate& estimate, uint32_t nowUs,
+                          uint32_t maximumAgeUs, float maximumNormDeviation);
 
 } // namespace gyrostab

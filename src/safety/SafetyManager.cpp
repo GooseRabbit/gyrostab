@@ -1,6 +1,7 @@
 #include "SafetyManager.h"
 
 #include "../sensors/SensorManager.h"
+#include "../orientation/OrientationEstimator.h"
 
 namespace gyrostab
 {
@@ -57,6 +58,25 @@ bool canRunController(SafetyState state)
 bool checkSensorTimeout(const ImuSample& sample, uint32_t nowUs, uint32_t maximumAgeUs)
 {
     return isSampleFresh(sample, nowUs, maximumAgeUs);
+}
+
+bool checkEstimatorHealth(const OrientationEstimate& estimate, uint32_t nowUs,
+                          uint32_t maximumAgeUs, float maximumNormDeviation)
+{
+    // Для однозначного определения возраста интервал должен быть меньше половины uint32_t.
+    if (maximumAgeUs >= 0x80000000UL)
+    {
+        return false;
+    }
+
+    // Беззнаковое вычитание корректно учитывает rollover счётчика микросекунд.
+    const uint32_t ageUs = nowUs - estimate.timestampUs;
+    if (ageUs > maximumAgeUs)
+    {
+        return false;
+    }
+
+    return validateOrientation(estimate, maximumNormDeviation);
 }
 
 } // namespace gyrostab

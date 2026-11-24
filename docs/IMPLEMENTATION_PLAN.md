@@ -336,7 +336,7 @@ Host-тесты `resetDeadZone()` прошли с GCC C++11 и `-Wall -Wextra -W
 1. `updateSafetyState()` — [x] выполняет один переход жизненного цикла за вызов; FAULT остаётся защёлкнутым.
 2. `canRunController()` — [x] возвращает `true` только в состоянии `Active`; остальные и неизвестные состояния не разрешают расчёт.
 3. `checkSensorTimeout()` — [x] проверяет свежесть IMU через `isSampleFresh()`;
-4. `checkEstimatorHealth()`;
+4. `checkEstimatorHealth()` — [x] проверяет свежесть оценки и валидность quaternion;
 5. `checkCommandLimits()`;
 6. `enterFault()`;
 7. `applySafeOutputPolicy()`.
@@ -352,6 +352,10 @@ Host-тесты `canRunController()` прошли с GCC C++11 и `-Wall -Wextra
 `checkSensorTimeout()` принимает `ImuSample`, текущее время `nowUs` и допустимый возраст `maximumAgeUs`. Возвращает `true`, если акселерометр и гироскоп отмечены валидными и образец не старше заданного интервала; иначе возвращает `false`. Вся проверка делегируется существующей `isSampleFresh()`, включая точную границу, rollover `uint32_t` и отказ для интервала от `2^31` микросекунд. Магнитометр остаётся необязательным. Функция не меняет образец и `SafetyState`, не переводит систему в `FAULT` и не управляет PWM.
 
 Host-тесты `checkSensorTimeout()` прошли с GCC C++11, `-Wall -Wextra -Wpedantic -Werror`, затем повторены с AddressSanitizer и UndefinedBehaviorSanitizer. Проверены граница и превышение тайм-аута, отсутствие каждого обязательного канала, необязательность магнитометра, rollover, будущая метка, неоднозначный интервал и неизменность образца. Для драйверной границы использованы заглушки `readImuSample()` и `checkImuStatus()`; сама логика свежести взята из `SensorManager.cpp`. Arduino-сборка и аппаратная проверка не выполнялись.
+
+`checkEstimatorHealth()` принимает оценку `OrientationEstimate`, `nowUs`, `maximumAgeUs` и `maximumNormDeviation`. Сначала проверяет допустимость возрастного интервала и свежесть timestamp с помощью беззнакового вычитания, корректного при rollover `uint32_t`; затем передаёт оценку в `validateOrientation()`. Возвращает `true` только при свежей, отмеченной валидной оценке с конечным quaternion, норма которого укладывается в переданный допуск. Функция не меняет оценку и не выполняет переход в `FAULT` или действия с PWM.
+
+Host-тесты `checkEstimatorHealth()` прошли с GCC C++11, `-Wall -Wextra -Wpedantic -Werror`, затем повторены с AddressSanitizer и UndefinedBehaviorSanitizer. Проверены возрастная граница, просрочка, нулевой интервал, rollover, будущий timestamp, интервал от `2^31`, невалидный флаг, нулевой и неконечный quaternion, допуск нормы и неизменность исходной оценки. Arduino-сборка и аппаратная проверка не выполнялись.
 
 Проверить потерю IMU, отключение SPI, некорректные данные, пропуск калибровки, ошибку оценки, чрезмерное значение `dt`, выход команды за пределы и перезапуск ESP32.
 
