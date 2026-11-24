@@ -411,6 +411,18 @@ Host-тесты `calibrateMagnetometer()` прошли с GCC C++11, `-Wall -Wex
 
 Сначала проверяем неподвижную платформу, затем ручные небольшие возмущения, затем повторяемые тесты с одинаковыми параметрами. Не меняем одновременно фильтр, коэффициенты, dead-zone и ограничения привода.
 
+### Диагностические функции
+
+- [x] `publishRawImuTelemetry()` — вывод одного переданного IMU-образца.
+- [x] `publishOrientationTelemetry()` — вывод одной переданной оценки quaternion.
+- [x] `publishTelemetry()` — вывод агрегированного снимка, подготовленного вызывающим кодом.
+- [ ] `recordFault()` — сохранение кода и причины ошибки.
+- [ ] `updateCounters()` — счётчики образцов, ошибок SPI, пропусков и тайм-аутов.
+
+`publishTelemetry()` принимает `TelemetrySnapshot` и выводит одну CSV-строку: `timestamp_us,dt_us,sample_rate_hz,calibration_valid,orientation_valid,control_error_rad,angular_rate_rad_s,dead_zone_active,p_term_us,d_term_us,total_correction_us,target_pulse_us,safety_state,fault_code,fault_reason`. Числовые поля передаются готовыми и выводятся с шестью знаками после запятой для float. `SafetyState` выводится числовым значением enum. Причина отказа заключена в кавычки CSV; кавычки внутри удваиваются, переносы строк заменяются пробелами, `nullptr` означает пустое поле. Сырые IMU и quaternion остаются в отдельных телеметрических функциях. Функция не вычисляет показатели, не читает датчики и не меняет снимок; частоту вызова задаёт вызывающий код.
+
+Host-тесты `publishTelemetry()` прошли с GCC C++11, `-Wall -Wextra -Wpedantic -Werror`, затем повторены с AddressSanitizer и UndefinedBehaviorSanitizer. Проверены фиксированный порядок 15 полей, значения float, CSV-экранирование, пустая причина, неизвестное значение enum и неизменность исходных данных. Тест использует mock Serial; Arduino-сборка и аппаратная проверка не выполнялись.
+
 ## 13. Условия готовности первой версии
 
 Первая версия считается пригодной для дальнейших испытаний, когда:

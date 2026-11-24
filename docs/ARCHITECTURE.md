@@ -432,7 +432,7 @@ pulse_target = servo_center_us + direction * delta_us
 
 - `publishRawImuTelemetry()` — выводит один переданный `ImuSample` одной CSV-строкой: timestamp, sequence, флаги валидности и значения трёх осей акселерометра, гироскопа и магнитометра.
 - `publishOrientationTelemetry()` — выводит один переданный `OrientationEstimate` одной CSV-строкой: timestamp, sequence, общий valid-флаг и четыре компоненты quaternion.
-- `publishTelemetry()` — периодически выводит диагностический снимок;
+- `publishTelemetry()` — выводит одну CSV-строку из заранее подготовленного `TelemetrySnapshot`; частоту задаёт вызывающий код;
 - `recordFault()` — сохраняет код и причину ошибки;
 - `updateCounters()` — ведёт счётчики новых пакетов, ошибок SPI, пропусков и тайм-аутов.
 
@@ -452,6 +452,8 @@ pulse_target = servo_center_us + direction * delta_us
 `publishRawImuTelemetry()` не читает IMU и не меняет образец; один вызов формирует одну CSV-строку. Частоту вызова определяет внешний код. Флаг валидности каждого канала выводится отдельно от измерений.
 
 `publishOrientationTelemetry()` не читает IMU, не изменяет оценку и не нормирует quaternion. Один вызов формирует строку из семи полей в фиксированном порядке: `timestamp_us,sequence,valid,quaternion_w,quaternion_x,quaternion_y,quaternion_z`. Компоненты quaternion выводятся с шестью знаками после запятой. Даже при `valid=false` строка выводится с `valid=0`, чтобы не терять сам факт состояния оценки; численные поля при этом нельзя трактовать как валидную ориентацию. Частоту вызова определяет внешний код.
+
+`publishTelemetry()` принимает заполненный вызывающим кодом `TelemetrySnapshot` и выводит одну CSV-строку из 15 полей: `timestamp_us,dt_us,sample_rate_hz,calibration_valid,orientation_valid,control_error_rad,angular_rate_rad_s,dead_zone_active,p_term_us,d_term_us,total_correction_us,target_pulse_us,safety_state,fault_code,fault_reason`. Все показатели передаются готовыми: функция не вычисляет частоту, `dt`, ошибку, P/D или PWM, не читает датчики и не меняет структуру. Float выводятся с шестью знаками после запятой; `SafetyState` — числовым значением enum (`Boot=0`, `Initializing=1`, `Calibrating=2`, `Ready=3`, `Active=4`, `Fault=5`; неизвестный код сохраняется числом). `faultReason` выводится как CSV-текст в кавычках: кавычки удваиваются, CR/LF заменяются пробелами, `nullptr` даёт пустое поле. Указатель на причину должен оставаться действительным на время вызова. Сырые измерения и quaternion печатаются отдельными функциями. Частоту вызова задаёт внешний код.
 
 Serial-вывод должен быть ограничен по частоте. Он не должен задерживать чтение датчика или контур управления.
 
