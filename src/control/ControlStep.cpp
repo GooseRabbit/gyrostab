@@ -10,6 +10,12 @@
 namespace gyrostab
 {
 
+void resetController(ControllerState& state)
+{
+    state.hasProcessedSample = false;
+    state.lastProcessedSampleSequence = 0U;
+}
+
 bool runControlStep(const OrientationEstimate& currentOrientation,
                     const ReferenceOrientation& referenceOrientation,
                     const ImuSample& sample,
