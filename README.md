@@ -78,9 +78,10 @@
 - [x] `publishOrientationTelemetry()` — одна CSV-строка с метаданными и quaternion, включая valid-флаг.
 - [x] `updateDeadZoneState()` — переключает caller-owned состояние dead-zone по абсолютной ошибке с гистерезисом.
 - [x] `applyDeadZone()` — подавляет только позиционную ошибку при активной dead-zone, сохраняя знак вне неё.
+- [x] `resetDeadZone()` — сбрасывает caller-owned состояние dead-zone в неактивное.
 - [ ] Arduino-сборка целевой платы и аппаратная проверка IMU — ещё не выполнены.
-- Следующая функция по плану: `resetDeadZone()`.
-- Общий прогресс реализации функций: 41/58 (70,7%); подробности — в [PROGRESS.md](docs/PROGRESS.md).
+- Следующая функция по плану: `updateSafetyState()`.
+- Общий прогресс реализации функций: 42/58 (72,4%); подробности — в [PROGRESS.md](docs/PROGRESS.md).
 
 ## Главные инженерные принципы
 
