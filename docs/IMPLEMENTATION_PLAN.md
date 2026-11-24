@@ -95,11 +95,11 @@ Host-тесты `validateConfig()` прошли с GCC C++11, `-Wall -Wextra -Wp
 4. `checkImuStatus()`;
 5. `resetImuDataPath()`;
 6. `validateSensorSample()`;
-6. `isSampleFresh()`;
-7. `updateSensorData()`;
-8. `getLatestSample()`;
-9. `getSensorHealth()`;
-10. `publishRawImuTelemetry()`.
+7. `isSampleFresh()`;
+8. `updateSensorData()`;
+9. `getLatestSample()`;
+10. `getSensorHealth()`;
+11. `publishRawImuTelemetry()`.
 
 Сначала подтвердить идентификатор датчика, связь SPI, реальные оси, диапазоны, частоту новых измерений и временные интервалы. Управление сервоприводом на этом этапе остаётся отключённым.
 
