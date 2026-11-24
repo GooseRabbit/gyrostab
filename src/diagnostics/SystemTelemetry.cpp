@@ -71,4 +71,10 @@ void publishTelemetry(const TelemetrySnapshot& snapshot)
     Serial.print('\n');
 }
 
+void recordFault(TelemetrySnapshot& snapshot, uint16_t faultCode, const char* faultReason)
+{
+    snapshot.faultCode = faultCode;
+    snapshot.faultReason = faultReason;
+}
+
 } // namespace gyrostab
