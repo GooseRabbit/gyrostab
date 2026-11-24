@@ -13,7 +13,6 @@ struct ImuSample;
 struct OrientationEstimate;
 bool isSampleFresh(const ImuSample&, uint32_t, uint32_t) { return false; }
 bool validateOrientation(const OrientationEstimate&, float) { return false; }
-bool limitServoPulse(int, int, int, int&) { return false; }
 
 } // namespace gyrostab
 
