@@ -80,9 +80,10 @@
 - [x] `applyDeadZone()` — подавляет только позиционную ошибку при активной dead-zone, сохраняя знак вне неё.
 - [x] `resetDeadZone()` — сбрасывает caller-owned состояние dead-zone в неактивное.
 - [x] `updateSafetyState()` — ведёт состояния BOOT → INITIALIZING → CALIBRATING → READY → ACTIVE; FAULT остаётся защёлкнутым.
+- [x] `canRunController()` — разрешает расчёт команды только при состоянии `Active`.
 - [ ] Arduino-сборка целевой платы и аппаратная проверка IMU — ещё не выполнены.
-- Следующая функция по плану: `canRunController()`.
-- Общий прогресс реализации функций: 43/58 (74,1%); подробности — в [PROGRESS.md](docs/PROGRESS.md).
+- Следующая функция по плану: `checkSensorTimeout()`.
+- Общий прогресс реализации функций: 44/58 (75,9%); подробности — в [PROGRESS.md](docs/PROGRESS.md).
 
 ## Главные инженерные принципы
 
