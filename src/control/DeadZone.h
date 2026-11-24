@@ -26,4 +26,8 @@ bool applyDeadZone(float positionalErrorRad,
                    const DeadZoneState& state,
                    float& outputErrorRad);
 
+// Возвращает dead-zone в исходное неактивное состояние.
+// Не затрагивает другие параметры или PWM.
+void resetDeadZone(DeadZoneState& state);
+
 } // namespace gyrostab
