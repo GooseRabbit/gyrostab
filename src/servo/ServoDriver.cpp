@@ -34,4 +34,30 @@ void setServoTarget(int requestedPulseUs,
     pendingTargetPulseUs = requestedPulseUs;
 }
 
+bool limitServoPulse(int requestedPulseUs,
+                     int minimumPulseUs,
+                     int maximumPulseUs,
+                     int& limitedPulseUs)
+{
+    if (minimumPulseUs < MIN_PULSE_WIDTH ||
+        maximumPulseUs > MAX_PULSE_WIDTH ||
+        minimumPulseUs >= maximumPulseUs)
+    {
+        return false;
+    }
+
+    int candidatePulseUs = requestedPulseUs;
+    if (candidatePulseUs < minimumPulseUs)
+    {
+        candidatePulseUs = minimumPulseUs;
+    }
+    else if (candidatePulseUs > maximumPulseUs)
+    {
+        candidatePulseUs = maximumPulseUs;
+    }
+
+    limitedPulseUs = candidatePulseUs;
+    return true;
+}
+
 } // namespace gyrostab
