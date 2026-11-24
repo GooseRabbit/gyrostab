@@ -299,11 +299,13 @@ pulse_target = servo_center_us + direction * delta_us
 
 Основные функции:
 
-- `computeControlError()` — вычисляет ошибку;
+- `computeControlError()` — объединяет вычисление относительной ориентации с проекцией signed-ошибки на управляемую ось;
 - `computeDampingRate()` — получает скорость для демпфирования;
 - `computePdCorrection()` — рассчитывает поправку;
 - `resetController()` — сбрасывает внутреннее состояние;
 - `validateControllerOutput()` — проверяет, что результат конечен и допустим.
+
+`computeControlError()` последовательно вызывает `computeRelativeOrientation()` и `projectErrorOnControlAxis()`: сначала получает `inverse(reference) * current`, затем извлекает signed twist error вокруг предварительно нормированной `AxisConfig.axisInSensorFrame`. Результат выражен в радианах. При отказе любого этапа выход остаётся неизменным. Функция не применяет P/D-коэффициенты, не использует gyro rate и не формирует команду серво.
 
 Коэффициенты не берутся из старых экспериментов как готовые: старые значения относятся к другой реализации и не подтверждены для нового контура.
 
