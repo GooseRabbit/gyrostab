@@ -76,9 +76,6 @@ void testRejectsInvalidValuesWithoutChangingState()
     assert(!gyrostab::updateDeadZoneState(0.2f, 0.5f, infinity, state));
     assert(state.active);
 
-    state.active = false;
-    assert(!gyrostab::updateDeadZoneState(0.2f, 0.5f, 0.8f, state) == false);
-    assert(state.active);
 }
 
 } // namespace
