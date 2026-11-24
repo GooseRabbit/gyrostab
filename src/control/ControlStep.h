@@ -34,6 +34,10 @@ struct ControllerState
     uint32_t lastProcessedSampleSequence;
 };
 
+// Сбрасывает отметку последнего обработанного измерения.
+// Повторный вызов безопасен; состояние PWM и другие параметры не затрагиваются.
+void resetController(ControllerState& state);
+
 // Вычисляет один P-D-шаг только по свежему, ещё не обработанному sample.
 // OrientationEstimate должна быть получена именно из этого sample.
 // currentPulseUs — последняя успешно отправленная команда; elapsedTimeUs —
