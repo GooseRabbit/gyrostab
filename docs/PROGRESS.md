@@ -176,7 +176,7 @@
 - [x] Host-тесты `getOrientation()`: копирование quaternion и метаданных, timestamp/sequence с нулевыми и максимальными значениями, отказ при invalid-флаге, нулевом/неконечном/ненормированном quaternion и некорректном допуске без изменения output.
 - [x] Host-тесты `resetOrientation()`: полная перезапись оценки нейтральным состоянием, очистка timestamp/sequence, сброс valid, повторный вызов и сброс ранее валидной оценки.
 - [x] Host-тесты `validateOrientation()`: валидный unit quaternion, произвольное направление единичной нормы, точная граница допуска, превышение допуска, invalid flag, нулевой quaternion, NaN/Inf всех компонент, некорректный допуск и неизменность оценки.
-- [x] Host-тесты драйвера с mock-интерфейсом SparkFun: проверены `beginImu(const BoardConfig&)`, GPIO IO18/IO19/IO23/IO5, отказ для неподтверждённой распайки, `configureImu()`, `readImuSample()`, `checkImuStatus()`, преобразование единиц и ошибки SPI/WrongID/NoData.
+- [ ] Повторно прогнать изменённые host-тесты драйвера с актуальной сигнатурой `beginImu(const BoardConfig&)`; целевой изолированный harness проверки GPIO/CS уже прошёл.
 - [x] Проверка драйвера с `-Wall -Wextra -Wpedantic -Werror`.
 - [x] Повторная проверка драйвера с AddressSanitizer и UndefinedBehaviorSanitizer.
 - [ ] Полная сборка Arduino Sketch для точного профиля ESP32 Nano.
