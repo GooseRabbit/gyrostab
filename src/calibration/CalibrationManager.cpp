@@ -190,6 +190,102 @@ bool validateCalibration(const ImuSample* samples, size_t sampleCount,
     return true;
 }
 
+bool calibrateMagnetometer(const ImuSample* samples, size_t sampleCount,
+                           const Vector3f& minimumAxisSpanMicroTesla,
+                           Vector3f& magneticFieldOffsetMicroTesla)
+{
+    if (samples == nullptr || sampleCount < 2U ||
+        !std::isfinite(minimumAxisSpanMicroTesla.x) ||
+        !std::isfinite(minimumAxisSpanMicroTesla.y) ||
+        !std::isfinite(minimumAxisSpanMicroTesla.z) ||
+        minimumAxisSpanMicroTesla.x <= 0.0f ||
+        minimumAxisSpanMicroTesla.y <= 0.0f ||
+        minimumAxisSpanMicroTesla.z <= 0.0f)
+    {
+        return false;
+    }
+
+    const ImuSample& firstSample = samples[0];
+    if (!firstSample.magnetometerValid ||
+        !std::isfinite(firstSample.magneticFieldMicroTesla.x) ||
+        !std::isfinite(firstSample.magneticFieldMicroTesla.y) ||
+        !std::isfinite(firstSample.magneticFieldMicroTesla.z))
+    {
+        return false;
+    }
+
+    double minimumX = firstSample.magneticFieldMicroTesla.x;
+    double maximumX = firstSample.magneticFieldMicroTesla.x;
+    double minimumY = firstSample.magneticFieldMicroTesla.y;
+    double maximumY = firstSample.magneticFieldMicroTesla.y;
+    double minimumZ = firstSample.magneticFieldMicroTesla.z;
+    double maximumZ = firstSample.magneticFieldMicroTesla.z;
+
+    for (size_t i = 1U; i < sampleCount; ++i)
+    {
+        const ImuSample& sample = samples[i];
+        if (!sample.magnetometerValid ||
+            !std::isfinite(sample.magneticFieldMicroTesla.x) ||
+            !std::isfinite(sample.magneticFieldMicroTesla.y) ||
+            !std::isfinite(sample.magneticFieldMicroTesla.z))
+        {
+            return false;
+        }
+
+        const double x = sample.magneticFieldMicroTesla.x;
+        const double y = sample.magneticFieldMicroTesla.y;
+        const double z = sample.magneticFieldMicroTesla.z;
+        if (x < minimumX)
+        {
+            minimumX = x;
+        }
+        if (x > maximumX)
+        {
+            maximumX = x;
+        }
+        if (y < minimumY)
+        {
+            minimumY = y;
+        }
+        if (y > maximumY)
+        {
+            maximumY = y;
+        }
+        if (z < minimumZ)
+        {
+            minimumZ = z;
+        }
+        if (z > maximumZ)
+        {
+            maximumZ = z;
+        }
+    }
+
+    const double spanX = maximumX - minimumX;
+    const double spanY = maximumY - minimumY;
+    const double spanZ = maximumZ - minimumZ;
+    if (spanX < minimumAxisSpanMicroTesla.x ||
+        spanY < minimumAxisSpanMicroTesla.y ||
+        spanZ < minimumAxisSpanMicroTesla.z)
+    {
+        return false;
+    }
+
+    const Vector3f candidate = {
+        static_cast<float>((minimumX + maximumX) * 0.5),
+        static_cast<float>((minimumY + maximumY) * 0.5),
+        static_cast<float>((minimumZ + maximumZ) * 0.5)
+    };
+    if (!std::isfinite(candidate.x) || !std::isfinite(candidate.y) ||
+        !std::isfinite(candidate.z))
+    {
+        return false;
+    }
+
+    magneticFieldOffsetMicroTesla = candidate;
+    return true;
+}
+
 void resetCalibration(Vector3f& gyroBiasRadPerSec, bool& calibrationValid)
 {
     gyroBiasRadPerSec = {0.0f, 0.0f, 0.0f};

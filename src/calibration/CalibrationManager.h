@@ -39,6 +39,13 @@ bool validateCalibration(const ImuSample* samples, size_t sampleCount,
                          const Vector3f& gyroBiasRadPerSec,
                          float maximumGyroscopeDeviationFromBiasRadPerSec);
 
+// Рассчитывает только hard-iron offset по середине min/max каждого магнитного канала.
+// minimumAxisSpan задаёт обязательный разброс каждой оси в микротеслах; soft-iron не исправляется.
+// При false выходной вектор и входные образцы остаются без изменений.
+bool calibrateMagnetometer(const ImuSample* samples, size_t sampleCount,
+                           const Vector3f& minimumAxisSpanMicroTesla,
+                           Vector3f& magneticFieldOffsetMicroTesla);
+
 // Сбрасывает рассчитанный bias и caller-owned признак готовности калибровки.
 // Окно измерений не хранится в CalibrationManager и здесь не изменяется.
 void resetCalibration(Vector3f& gyroBiasRadPerSec, bool& calibrationValid);
