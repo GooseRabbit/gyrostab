@@ -76,9 +76,10 @@
 - [x] `updateOrientation()` — относительная gyro-only quaternion-интеграция после вычитания bias.
 - [x] `validateOrientation()` — проверка валидности и нормы рассчитанного quaternion без его изменения.
 - [x] `publishOrientationTelemetry()` — одна CSV-строка с метаданными и quaternion, включая valid-флаг.
+- [x] `updateDeadZoneState()` — переключает caller-owned состояние dead-zone по абсолютной ошибке с гистерезисом.
 - [ ] Arduino-сборка целевой платы и аппаратная проверка IMU — ещё не выполнены.
-- Следующая функция по плану: `updateDeadZoneState()`.
-- Общий прогресс реализации функций: 39/58 (67,2%); подробности — в [PROGRESS.md](docs/PROGRESS.md).
+- Следующая функция по плану: `applyDeadZone()`.
+- Общий прогресс реализации функций: 40/58 (69,0%); подробности — в [PROGRESS.md](docs/PROGRESS.md).
 
 ## Главные инженерные принципы
 
