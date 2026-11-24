@@ -40,4 +40,7 @@ bool writeServoPulse(Servo& servo,
                      int minimumPulseUs,
                      int maximumPulseUs);
 
+// Отключает PWM через detach(); повторный вызов для отключённой сервы допустим.
+bool disableServoOutput(Servo& servo);
+
 } // namespace gyrostab
