@@ -51,4 +51,9 @@ bool applyDeadZone(float positionalErrorRad,
     return true;
 }
 
+void resetDeadZone(DeadZoneState& state)
+{
+    state.active = false;
+}
+
 } // namespace gyrostab
