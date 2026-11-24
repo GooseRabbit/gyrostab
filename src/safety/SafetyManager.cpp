@@ -88,4 +88,10 @@ bool checkCommandLimits(int targetPulseUs, int minimumPulseUs, int maximumPulseU
            validatedTargetPulseUs == targetPulseUs;
 }
 
+void enterFault(SafetyState& state)
+{
+    // Защёлкивает аварийное состояние; причина и реакция сервопривода обрабатываются отдельно.
+    state = SafetyState::Fault;
+}
+
 } // namespace gyrostab

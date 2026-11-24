@@ -50,4 +50,7 @@ bool checkEstimatorHealth(const OrientationEstimate& estimate, uint32_t nowUs,
 // Не ограничивает исходную цель и не отправляет PWM.
 bool checkCommandLimits(int targetPulseUs, int minimumPulseUs, int maximumPulseUs);
 
+// Защёлкивает SafetyState::Fault; причину отказа сохраняет отдельная функция диагностики.
+void enterFault(SafetyState& state);
+
 } // namespace gyrostab
