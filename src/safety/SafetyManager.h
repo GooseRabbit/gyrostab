@@ -30,4 +30,8 @@ struct SafetyStateInputs
 // При неизвестном значении SafetyState возвращает false и не меняет state.
 bool updateSafetyState(SafetyState& state, const SafetyStateInputs& inputs);
 
+// Разрешает выполнение контроллера только в состоянии Active.
+// Функция не меняет состояние безопасности.
+bool canRunController(SafetyState state);
+
 } // namespace gyrostab
