@@ -1,5 +1,8 @@
 #include "ServoDriver.h"
 
+#include <cmath>
+#include <stdint.h>
+
 namespace gyrostab
 {
 
@@ -57,6 +60,52 @@ bool limitServoPulse(int requestedPulseUs,
     }
 
     limitedPulseUs = candidatePulseUs;
+    return true;
+}
+
+bool limitServoSlewRate(int currentPulseUs,
+                        int targetPulseUs,
+                        float maximumChangeUsPerSecond,
+                        uint32_t elapsedTimeUs,
+                        int& limitedPulseUs)
+{
+    if (!std::isfinite(maximumChangeUsPerSecond) ||
+        maximumChangeUsPerSecond < 0.0f)
+    {
+        return false;
+    }
+
+    const int64_t deltaPulseUs = static_cast<int64_t>(targetPulseUs) -
+                                 static_cast<int64_t>(currentPulseUs);
+    if (deltaPulseUs == 0)
+    {
+        limitedPulseUs = targetPulseUs;
+        return true;
+    }
+
+    const double maximumChange =
+        static_cast<double>(maximumChangeUsPerSecond) *
+        static_cast<double>(elapsedTimeUs) / 1000000.0;
+    const double absoluteDelta = deltaPulseUs >= 0
+                                     ? static_cast<double>(deltaPulseUs)
+                                     : -static_cast<double>(deltaPulseUs);
+
+    if (!std::isfinite(maximumChange) || maximumChange < 0.0)
+    {
+        return false;
+    }
+
+    if (maximumChange >= absoluteDelta)
+    {
+        limitedPulseUs = targetPulseUs;
+        return true;
+    }
+
+    // Округление вниз гарантирует, что предел скорости не будет превышен.
+    const int64_t allowedChange = static_cast<int64_t>(std::floor(maximumChange));
+    const int64_t candidatePulseUs = static_cast<int64_t>(currentPulseUs) +
+                                     (deltaPulseUs > 0 ? allowedChange : -allowedChange);
+    limitedPulseUs = static_cast<int>(candidatePulseUs);
     return true;
 }
 
