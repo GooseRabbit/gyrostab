@@ -37,4 +37,18 @@ bool updateDeadZoneState(float absoluteErrorRad,
     return true;
 }
 
+bool applyDeadZone(float positionalErrorRad,
+                   const DeadZoneState& state,
+                   float& outputErrorRad)
+{
+    if (!std::isfinite(positionalErrorRad))
+    {
+        return false;
+    }
+
+    const float candidateErrorRad = state.active ? 0.0f : positionalErrorRad;
+    outputErrorRad = candidateErrorRad;
+    return true;
+}
+
 } // namespace gyrostab
