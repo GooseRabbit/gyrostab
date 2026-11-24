@@ -81,9 +81,10 @@
 - [x] `resetDeadZone()` — сбрасывает caller-owned состояние dead-zone в неактивное.
 - [x] `updateSafetyState()` — ведёт состояния BOOT → INITIALIZING → CALIBRATING → READY → ACTIVE; FAULT остаётся защёлкнутым.
 - [x] `canRunController()` — разрешает расчёт команды только при состоянии `Active`.
+- [x] `checkSensorTimeout()` — проверяет свежесть образца и обязательные каналы IMU через общую проверку `isSampleFresh()`.
 - [ ] Arduino-сборка целевой платы и аппаратная проверка IMU — ещё не выполнены.
-- Следующая функция по плану: `checkSensorTimeout()`.
-- Общий прогресс реализации функций: 44/58 (75,9%); подробности — в [PROGRESS.md](docs/PROGRESS.md).
+- Следующая функция по плану: `checkEstimatorHealth()`.
+- Общий прогресс реализации функций: 45/58 (77,6%); подробности — в [PROGRESS.md](docs/PROGRESS.md).
 
 ## Главные инженерные принципы
 

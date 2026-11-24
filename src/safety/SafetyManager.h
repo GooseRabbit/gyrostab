@@ -5,6 +5,8 @@
 namespace gyrostab
 {
 
+struct ImuSample;
+
 // Состояния жизненного цикла безопасности, описанные в архитектуре проекта.
 enum class SafetyState : uint8_t
 {
@@ -33,5 +35,9 @@ bool updateSafetyState(SafetyState& state, const SafetyStateInputs& inputs);
 // Разрешает выполнение контроллера только в состоянии Active.
 // Функция не меняет состояние безопасности.
 bool canRunController(SafetyState state);
+
+// Возвращает true, если обязательные каналы IMU присутствуют и образец свежий.
+// Проверка использует общую логику isSampleFresh() и не меняет образец или SafetyState.
+bool checkSensorTimeout(const ImuSample& sample, uint32_t nowUs, uint32_t maximumAgeUs);
 
 } // namespace gyrostab

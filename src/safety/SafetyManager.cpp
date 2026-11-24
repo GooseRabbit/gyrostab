@@ -1,5 +1,7 @@
 #include "SafetyManager.h"
 
+#include "../sensors/SensorManager.h"
+
 namespace gyrostab
 {
 
@@ -50,6 +52,11 @@ bool updateSafetyState(SafetyState& state, const SafetyStateInputs& inputs)
 bool canRunController(SafetyState state)
 {
     return state == SafetyState::Active;
+}
+
+bool checkSensorTimeout(const ImuSample& sample, uint32_t nowUs, uint32_t maximumAgeUs)
+{
+    return isSampleFresh(sample, nowUs, maximumAgeUs);
 }
 
 } // namespace gyrostab
