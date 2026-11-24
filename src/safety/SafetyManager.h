@@ -16,8 +16,8 @@ enum class SafetyState : uint8_t
     Fault
 };
 
-// Флаги текущего этапа запуска и одноразовый запрос активации.
-// activationRequested обрабатывается только когда текущее состояние Ready.
+// Флаги текущего этапа запуска и уровень запроса активации.
+// В Ready он включает Active; в Active его снятие возвращает систему в Ready.
 struct SafetyStateInputs
 {
     bool initializationComplete;
