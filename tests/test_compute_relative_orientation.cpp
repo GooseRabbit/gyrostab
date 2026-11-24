@@ -74,7 +74,9 @@ int main()
     const float infinity = std::numeric_limits<float>::infinity();
     assert(!computeRelativeOrientation(current, referenceX, nanValue, relative));
     assert(!computeRelativeOrientation(current, referenceX, infinity, relative));
-    assert(!computeRelativeOrientation(current, -referenceX, 0.01f, relative));
+    const ReferenceOrientation invalidQuaternionReference = {{nanValue, 0.0f, 0.0f, 0.0f}, true};
+    assert(!computeRelativeOrientation(current, invalidQuaternionReference, 0.01f, relative));
+    assert(sameQuaternion(relative, saved));
     assert(!computeRelativeOrientation(current, referenceX, -0.01f, relative));
     assert(sameQuaternion(relative, saved));
 
