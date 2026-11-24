@@ -397,7 +397,7 @@ pulse_target = servo_center_us + direction * delta_us
 Основные функции:
 
 - `updateSafetyState()` — выполняет переходы жизненного цикла по состоянию и сигналам завершения этапов;
-- `canRunController()` — проверяет разрешение на расчёт команды;
+- `canRunController()` — возвращает разрешение на расчёт только для `Active`;
 - `checkSensorTimeout()` — обнаруживает отсутствие свежих данных;
 - `checkEstimatorHealth()` — проверяет состояние оценки ориентации;
 - `checkCommandLimits()` — проверяет границы команды;
@@ -405,6 +405,8 @@ pulse_target = servo_center_us + direction * delta_us
 - `applySafeOutputPolicy()` — выполняет выбранную и проверенную реакцию на отказ.
 
 `updateSafetyState()` использует `SafetyState` (`Boot`, `Initializing`, `Calibrating`, `Ready`, `Active`, `Fault`) и `SafetyStateInputs`: `initializationComplete`, `calibrationComplete`, `activationRequested`. За один вызов выполняется только один переход: `Boot` → `Initializing`; `Initializing` → `Calibrating` после завершения инициализации; `Calibrating` → `Ready` после калибровки; `Ready` → `Active` по явному запросу; `Active` → `Ready` после снятия запроса. `Fault` защёлкнут: `updateSafetyState()` не выводит систему из него. Неизвестное значение `SafetyState` отклоняется без изменения состояния. Функция отвечает только за жизненный цикл: проверки состояния IMU, тайм-аутов, оценки ориентации и пределов будут выполняться отдельными функциями, а переход в `Fault` выполняет `enterFault()`.
+
+`canRunController()` возвращает `true` только для `SafetyState::Active`; в `Boot`, `Initializing`, `Calibrating`, `Ready`, `Fault` и при неизвестном значении enum возвращает `false`. Функция принимает состояние по значению и не меняет его, не запускает расчёт контроллера и не отправляет PWM. Остальные проверки разрешения — свежесть датчиков, здоровье оценщика и допустимость команды — выполняются своими функциями SafetyManager.
 
 Причины запрета: ошибка инициализации, нет свежего IMU, ошибка/повреждение пакета, недопустимый `dt`, невалидный кватернион, не завершена калибровка, не захвачена опора, не подтверждены пределы привода.
 
