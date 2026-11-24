@@ -14,4 +14,8 @@ bool beginServo(Servo& servo,
                 int minimumPulseUs,
                 int maximumPulseUs);
 
+// Сохраняет исходный запрос; ограничение импульса выполняется отдельно.
+void setServoTarget(int requestedPulseUs,
+                    int& pendingTargetPulseUs);
+
 } // namespace gyrostab
