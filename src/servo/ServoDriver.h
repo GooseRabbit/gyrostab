@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ESP32Servo.h>
+#include <stdint.h>
 
 namespace gyrostab
 {
@@ -24,5 +25,12 @@ bool limitServoPulse(int requestedPulseUs,
                      int minimumPulseUs,
                      int maximumPulseUs,
                      int& limitedPulseUs);
+
+// Ограничивает изменение команды по времени; target должен быть уже ограничен по min/max.
+bool limitServoSlewRate(int currentPulseUs,
+                        int targetPulseUs,
+                        float maximumChangeUsPerSecond,
+                        uint32_t elapsedTimeUs,
+                        int& limitedPulseUs);
 
 } // namespace gyrostab
